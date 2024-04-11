@@ -45,5 +45,6 @@
 **feature**:
 
 - UI 구성 완료 <update. 04.11>
+- 번역 언어 설정 View 통신 완료 <update. 04.11>
 
 ---
