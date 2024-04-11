@@ -35,6 +35,11 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   blank_: {
-    flex: 8,
+    flex: 7,
+  },
+  logout: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "red",
   },
 });

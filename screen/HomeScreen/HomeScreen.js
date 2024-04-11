@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Button, View } from "react-native";
 import AppText from "../../components/common/AppText";
 import { useAuth } from "../../config/AuthContext";
+import { styles } from "./HomeScreenStyle";
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -26,8 +27,7 @@ const HomeScreen = () => {
   }, [navigation]);
 
   return (
-    <View>
-      <Button title="Logout" onPress={logout} />
+    <View style={styles.container}>
       <AppText>{token}</AppText>
     </View>
   );

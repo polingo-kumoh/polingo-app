@@ -15,7 +15,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const ProfileScreen = () => {
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const { data: userData, isLoading, error } = useUserData(token);
   const { mutate: updateNicknameMutate } = useUpdateNickname();
   const [isEditing, setIsEditing] = useState(false);
@@ -94,6 +94,9 @@ const ProfileScreen = () => {
           <AppText>{userData.defaultLanguage}</AppText>
           <MaterialIcons name="keyboard-arrow-right" size={24} color="#bbb" />
         </View>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.userSetting} onPress={() => logout()}>
+        <AppText style={styles.logout}>로그아웃</AppText>
       </TouchableOpacity>
       <View style={styles.blank_}></View>
     </View>
