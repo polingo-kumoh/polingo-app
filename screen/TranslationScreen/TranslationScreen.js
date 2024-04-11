@@ -6,14 +6,19 @@ import AppText from "../../components/common/AppText";
 import { styles } from "./TranslationScreenStyle";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { useAuth } from "./../../config/AuthContext";
+import { useUserData } from "../../hooks/useUserData";
 
 const TranslationScreen = () => {
+  const { token } = useAuth();
+  const { data: userData } = useUserData(token);
+
   return (
     <View style={styles.container}>
       <TextInput style={styles.input} placeholder="텍스트 입력" />
       <View style={styles.bottom}>
         <View style={styles.translatedLanguage}>
-          <AppText style={styles.language}>영어</AppText>
+          <AppText style={styles.language}>{userData.defaultLanguage}</AppText>
           <AntDesign name="arrowright" size={24} color="black" />
           <AppText style={styles.language}>한국어</AppText>
         </View>
