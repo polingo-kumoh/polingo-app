@@ -7,9 +7,9 @@ export const styles = StyleSheet.create({
     position: "relative",
   },
   carouselImage: {
-    width: theme.screenWidth - 60,
+    width: theme.screenWidth - 40,
     height: theme.screenHeight / 4,
-    borderRadius: 20,
+    borderRadius: 10,
     opacity: 0.5,
   },
   overlayTextView: {

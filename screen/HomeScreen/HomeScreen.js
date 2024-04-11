@@ -2,13 +2,15 @@
 
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Button, View } from "react-native";
+import { View } from "react-native";
 import AppText from "../../components/common/AppText";
 import { useAuth } from "../../config/AuthContext";
 import { styles } from "./HomeScreenStyle";
 
 import { Ionicons } from "@expo/vector-icons";
 import HomeCarousel from "./../../components/component/HomeCarousel/index";
+import { TouchableOpacity } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const HomeScreen = () => {
   const { token } = useAuth();
@@ -50,7 +52,22 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <HomeCarousel items={carouselImages} />
+      <View style={styles.carouselView}>
+        <HomeCarousel items={carouselImages} />
+      </View>
+      <TouchableOpacity
+        style={styles.translationBtn}
+        onPress={() => navigation.navigate("TranslationScreen")}
+      >
+        <View>
+          <AppText style={styles.transBtnText}>번역 시작하기</AppText>
+          <AppText style={styles.transBtnSubText}>Polingo에서</AppText>
+          <AppText style={styles.transBtnSubText}>원하는 언어 번역하기</AppText>
+        </View>
+
+        <MaterialCommunityIcons name="translate" size={60} color="white" />
+      </TouchableOpacity>
+      <View style={styles.blank_}></View>
     </View>
   );
 };

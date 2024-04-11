@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../screen/HomeScreen/HomeScreen";
 import ProfileScreen from "../screen/ProfileScreen/ProfileScreen";
 import ChangeLanguageScreen from "../screen/ProfileScreen/ChangeLanguage/ChangeLanguageScreen";
+import TranslationScreen from "../screen/TranslationScreen/TranslationScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +36,11 @@ const MainNavigator = () => {
         name="ChangeLanguageScreen"
         component={ChangeLanguageScreen}
         options={{ headerTitle: "기본 언어 설정" }}
+      />
+      <Stack.Screen
+        name="TranslationScreen"
+        component={TranslationScreen}
+        options={{ headerTitle: "번역 하기" }}
       />
     </Stack.Navigator>
   );
