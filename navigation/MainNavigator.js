@@ -10,12 +10,31 @@ const Stack = createNativeStackNavigator();
 
 const MainNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="HomeScreen">
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+    <Stack.Navigator
+      initialRouteName="HomeScreen"
+      screenOptions={{
+        headerTitleAlign: "center",
+        headerTitleStyle: {
+          fontFamily: "Noto-Sans-Bold",
+        },
+      }}
+    >
+      <Stack.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{
+          headerTitle: "POLINGO",
+        }}
+      />
+      <Stack.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{ headerTitle: "프로필" }}
+      />
       <Stack.Screen
         name="ChangeLanguageScreen"
         component={ChangeLanguageScreen}
+        options={{ headerTitle: "기본 언어 설정" }}
       />
     </Stack.Navigator>
   );

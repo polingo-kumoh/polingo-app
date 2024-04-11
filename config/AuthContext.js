@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchToken = async () => {
       const userToken = await AsyncStorage.getItem("userToken");
+      setToken(userToken);
       if (userToken) {
         setIsAuthenticated(true);
       }

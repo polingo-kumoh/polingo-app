@@ -10,7 +10,7 @@ const Stack = createNativeStackNavigator();
 const AuthNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="LoginScreen"
       screenOptions={{
         headerShown: false, // 여기서 모든 스크린의 헤더를 숨깁니다.
       }}

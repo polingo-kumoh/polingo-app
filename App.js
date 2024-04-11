@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { QueryClientProvider } from "react-query";
 import { queryClient } from "./config/queryClient";
