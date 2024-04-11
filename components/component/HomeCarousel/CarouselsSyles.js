@@ -23,9 +23,7 @@ export const styles = StyleSheet.create({
     padding: 20,
   },
   overlayTitle: {
-    flexDirection: "row",
     alignSelf: "center",
-    ...theme.centerStyle,
     marginBottom: 15,
   },
   regionText: {

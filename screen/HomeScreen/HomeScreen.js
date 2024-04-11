@@ -26,7 +26,12 @@ const HomeScreen = () => {
     },
     {
       source: require("../../assets/images/눈.jpg"),
-      region: "눈 오는 날의 이미지",
+      region: "구미시 옥계동",
+      temperature: "7º",
+      example_sentence1: "Can I have an umbrella, please",
+      example_sentence1_translate: "우산 하나 주세요",
+      example_sentence2: "It's snowing a lot, so drive safely",
+      example_sentence2_translate: "눈이 많이오니 안전 운전 하세요",
     },
   ];
 
