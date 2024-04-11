@@ -37,3 +37,13 @@
 - 기본 언어 설정 클릭 시 기본 언어 설정 변경 가능
 
 ---
+
+![Traslation Screen](https://github.com/polingo-kumoh/polingo-app/assets/57749824/96bd26d3-efb8-46e9-aeb9-dc34d9022db0)
+
+### 번역 스크린
+
+**feature**:
+
+- UI 구성 완료 <update. 04.11>
+
+---
