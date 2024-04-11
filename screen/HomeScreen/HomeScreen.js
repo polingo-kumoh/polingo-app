@@ -8,10 +8,27 @@ import { useAuth } from "../../config/AuthContext";
 import { styles } from "./HomeScreenStyle";
 
 import { Ionicons } from "@expo/vector-icons";
+import HomeCarousel from "./../../components/component/HomeCarousel/index";
 
 const HomeScreen = () => {
-  const { logout, token } = useAuth();
+  const { token } = useAuth();
   const navigation = useNavigation();
+
+  const carouselImages = [
+    {
+      source: require("../../assets/images/비.jpg"),
+      region: "구미시 옥계동",
+      temperature: "7º",
+      example_sentence1: "Can I have an umbrella, please",
+      example_sentence1_translate: "우산 하나 주세요",
+      example_sentence2: "It's raining a lot, so drive safely",
+      example_sentence2_translate: "비가 많이오니 안전 운전 하세요",
+    },
+    {
+      source: require("../../assets/images/눈.jpg"),
+      region: "눈 오는 날의 이미지",
+    },
+  ];
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -28,7 +45,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <AppText>{token}</AppText>
+      <HomeCarousel items={carouselImages} />
     </View>
   );
 };
