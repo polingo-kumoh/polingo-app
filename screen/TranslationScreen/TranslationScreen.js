@@ -1,7 +1,13 @@
 // Inside TranslationScreen.js
 
 import React, { useState, useEffect } from "react";
-import { View, TextInput, TouchableOpacity, Keyboard } from "react-native";
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Keyboard,
+  Alert,
+} from "react-native";
 import AppText from "../../components/common/AppText";
 import { styles } from "./TranslationScreenStyle";
 import { AntDesign } from "@expo/vector-icons";
@@ -10,11 +16,14 @@ import { useAuth } from "./../../config/AuthContext";
 import { useUserData } from "../../hooks/useUserData";
 import ConfirmPhotoModal from "../../components/component/ConfirmPhotoModal/ConfirmPhotoModal";
 import theme from "../../config/theme";
+import usePermissions from "../../hooks/usePermissions";
 
 import * as ImagePicker from "expo-image-picker";
+import { Camera } from "expo-camera";
 
 const TranslationScreen = () => {
   const { token } = useAuth();
+  const permissions = usePermissions();
   const [isLoading, setLoading] = useState(true);
   const [inputText, setInputText] = useState("");
   const [transBtn, setTransBtn] = useState(false);
@@ -34,26 +43,36 @@ const TranslationScreen = () => {
     }
   }, [userData]);
 
-  const pickImage = async () => {
-    const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      const { status: newStatus } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (newStatus !== "granted") {
-        alert("카메라 접근 권한이 필요합니다.");
-        return;
-      }
+  useEffect(() => {
+    if (permissions.status === "denied") {
+      Alert.alert(
+        "허가 거부",
+        "카메라와 앨범에 접근하기 위한 권한이 없습니다.",
+        [
+          {
+            text: "취소",
+            onPress: () => console.log("Permission denied response"),
+          },
+          { text: "설정", onPress: () => Linking.openSettings() },
+        ],
+        { cancelable: false }
+      );
     }
+  }, [permissions.status]);
 
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      setSelectedImage(result.assets[0].uri);
-      setModalVisible(true);
+  const handleImageAction = async (action) => {
+    try {
+      let result = await action({
+        allowsEditing: false,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      if (!result.cancelled) {
+        setSelectedImage(result.assets[0].uri);
+        setModalVisible(true);
+      }
+    } catch (error) {
+      Alert.alert("Error", "이미지 업로드 실패");
     }
   };
 
@@ -88,6 +107,14 @@ const TranslationScreen = () => {
     );
   }
 
+  if (!permissions.camera || !permissions.mediaLibrary) {
+    return (
+      <View style={styles.container}>
+        <AppText>Permissions required!</AppText>
+      </View>
+    );
+  }
+
   const resetTranslation = () => {
     Keyboard.dismiss();
     setTransBtn(false);
@@ -102,6 +129,10 @@ const TranslationScreen = () => {
   const handleImageConfirm = (uri) => {
     console.log("URI:", uri);
   };
+
+  const pickImage = () =>
+    handleImageAction(ImagePicker.launchImageLibraryAsync);
+  const takePhoto = () => handleImageAction(ImagePicker.launchCameraAsync);
 
   return (
     <View style={styles.container}>
@@ -168,7 +199,7 @@ const TranslationScreen = () => {
               <FontAwesome name="microphone" size={24} color="white" />
             </TouchableOpacity>
             <View style={styles.side}>
-              <TouchableOpacity style={styles.sideBtn}>
+              <TouchableOpacity style={styles.sideBtn} onPress={takePhoto}>
                 <AntDesign name="camera" size={24} color="black" />
               </TouchableOpacity>
               <AppText style={styles.sideText}>사진 찍기</AppText>
