@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
+import { Audio } from "expo-av";
 import { Camera } from "expo-camera";
 
 const usePermissions = () => {
@@ -14,9 +15,12 @@ const usePermissions = () => {
       setPermissions((prev) => ({ ...prev, status: "requesting" }));
       const cameraPerm = await Camera.requestCameraPermissionsAsync();
       const mediaPerm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const audioPerm = await Audio.requestPermissionsAsync(); //
+
       setPermissions({
         camera: cameraPerm.status === "granted",
         mediaLibrary: mediaPerm.status === "granted",
+        microphone: audioPerm.status === "granted",
         status: "granted",
       });
     };

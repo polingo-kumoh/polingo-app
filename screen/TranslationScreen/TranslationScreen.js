@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Keyboard,
   Alert,
+  Linking,
 } from "react-native";
 import AppText from "../../components/common/AppText";
 import { styles } from "./TranslationScreenStyle";
@@ -17,13 +18,15 @@ import { useUserData } from "../../hooks/useUserData";
 import ConfirmPhotoModal from "../../components/component/ConfirmPhotoModal/ConfirmPhotoModal";
 import theme from "../../config/theme";
 import usePermissions from "../../hooks/usePermissions";
+import useAudioRecorder from "../../hooks/useAudioRecorder";
 
 import * as ImagePicker from "expo-image-picker";
-import { Camera } from "expo-camera";
 
 const TranslationScreen = () => {
   const { token } = useAuth();
   const permissions = usePermissions();
+  const { startRecording, stopRecording, recordUri, isRecording } =
+    useAudioRecorder();
   const [isLoading, setLoading] = useState(true);
   const [inputText, setInputText] = useState("");
   const [transBtn, setTransBtn] = useState(false);
@@ -42,6 +45,10 @@ const TranslationScreen = () => {
       setLoading(false);
     }
   }, [userData]);
+
+  useEffect(() => {
+    console.log(recordUri);
+  }, [recordUri]);
 
   useEffect(() => {
     if (permissions.status === "denied") {
@@ -195,9 +202,21 @@ const TranslationScreen = () => {
               <AppText style={styles.sideText}>사진 불러오기</AppText>
             </View>
 
-            <TouchableOpacity style={styles.centerBtn}>
-              <FontAwesome name="microphone" size={24} color="white" />
-            </TouchableOpacity>
+            {isRecording ? (
+              <TouchableOpacity
+                style={styles.centerBtn}
+                onPress={stopRecording}
+              >
+                <FontAwesome name="stop-circle" size={24} color="red" />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.centerBtn}
+                onPress={startRecording}
+              >
+                <FontAwesome name="microphone" size={24} color="white" />
+              </TouchableOpacity>
+            )}
             <View style={styles.side}>
               <TouchableOpacity style={styles.sideBtn} onPress={takePhoto}>
                 <AntDesign name="camera" size={24} color="black" />
