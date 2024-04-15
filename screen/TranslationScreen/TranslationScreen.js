@@ -31,7 +31,10 @@ const TranslationScreen = () => {
   const [inputText, setInputText] = useState("");
   const [transBtn, setTransBtn] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState({
+    uri: null,
+    base64: null,
+  });
 
   const { data: userData } = useUserData(token);
   const [inputHeight, setInputHeight] = useState(theme.screenHeight - 300);
@@ -47,7 +50,7 @@ const TranslationScreen = () => {
   }, [userData]);
 
   useEffect(() => {
-    console.log(recordUri);
+    //console.log(recordUri);
   }, [recordUri]);
 
   useEffect(() => {
@@ -73,9 +76,13 @@ const TranslationScreen = () => {
         allowsEditing: false,
         aspect: [4, 3],
         quality: 1,
+        base64: true,
       });
       if (!result.cancelled) {
-        setSelectedImage(result.assets[0].uri);
+        setSelectedImage({
+          uri: result.assets[0].uri,
+          base64: result.assets[0].base64,
+        });
         setModalVisible(true);
       }
     } catch (error) {
@@ -134,7 +141,7 @@ const TranslationScreen = () => {
   });
 
   const handleImageConfirm = (uri) => {
-    console.log("URI:", uri);
+    //console.log("URI:", uri);
   };
 
   const pickImage = () =>

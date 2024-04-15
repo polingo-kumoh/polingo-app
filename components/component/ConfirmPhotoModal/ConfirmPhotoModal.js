@@ -29,7 +29,7 @@ const ConfirmPhotoModal = ({
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Image
-            source={{ uri: selectedImage }}
+            source={{ uri: selectedImage.uri }}
             style={styles.modalImage}
             resizeMode="contain"
           />

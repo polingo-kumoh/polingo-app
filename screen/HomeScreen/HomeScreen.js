@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { View } from "react-native";
+import { View, Alert } from "react-native";
 import AppText from "../../components/common/AppText";
 import { useAuth } from "../../config/AuthContext";
 import { styles } from "./HomeScreenStyle";
@@ -14,13 +14,17 @@ import { TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const HomeScreen = () => {
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const { error, isError } = useUserData(token);
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (isError && error.response && error.response.status === 401) {
-      navigation.navigate("LoginScreen");
+    if (isError) {
+      if (error.response && error.response.status === 401) {
+        Alert.alert("세션 만료", "다시 로그인 해주세요.", [
+          { text: "OK", onPress: () => logout() },
+        ]);
+      }
     }
   }, [isError, error, navigation]);
 
