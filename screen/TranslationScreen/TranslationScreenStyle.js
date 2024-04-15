@@ -105,7 +105,7 @@ export const styles = StyleSheet.create({
   },
   transView: {
     position: "absolute",
-    bottom: theme.screenHeight - 250,
+    bottom: theme.screenHeight - 500,
     left: 20,
     right: 20,
     backgroundColor: "#fff",

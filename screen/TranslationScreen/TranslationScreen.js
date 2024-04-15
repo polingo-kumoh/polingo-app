@@ -40,7 +40,6 @@ const TranslationScreen = () => {
   });
 
   const { data: userData } = useUserData(token);
-  const [inputHeight, setInputHeight] = useState(theme.screenHeight - 300);
 
   useEffect(() => {
     if (
@@ -93,46 +92,37 @@ const TranslationScreen = () => {
     }
   };
 
-  const handleContentSizeChange = (event) => {
-    const newHeight = event.nativeEvent.contentSize.height;
-    if (newHeight > theme.screenHeight - 300) {
-      setInputHeight(newHeight);
-    }
-  };
-
   const transText = () => {
-    setTransBtn(true);
-    translateText(
-      {
-        token,
-        text: inputText,
-        default_language: userData.default_language,
-      },
-      {
-        onSuccess: (data) => {
-          setTranslationResult(data.translated_text);
-        },
-        onError: (error) => {
-          console.error("Translation error:", error);
-          Alert.alert(
-            "잠시 후 다시 시도해주세요.",
-            error.message || "Failed to translate"
-          );
-        },
-      }
-    );
-    Keyboard.dismiss();
-  };
+    const shouldTranslate = inputText.trim().length > 0;
 
-  const getInputStyle = () => {
-    const baseStyle = {
-      ...styles.input,
-      height: Math.max(theme.screenHeight - 300, inputHeight),
-    };
-    if (transBtn) {
-      return [baseStyle, { height: theme.screenHeight - 150 }];
+    if (shouldTranslate) {
+      setTransBtn(true);
+      setLoading(true);
+      translateText(
+        {
+          token,
+          text: inputText,
+          default_language: userData.default_language,
+        },
+        {
+          onSuccess: (data) => {
+            setTranslationResult(data.translated_text);
+            setLoading(false);
+          },
+          onError: (error) => {
+            console.error("Translation error:", error);
+            Alert.alert(
+              "Translation Error",
+              error.message || "Failed to translate. Please try again later."
+            );
+            setLoading(false);
+          },
+        }
+      );
+      Keyboard.dismiss();
+    } else {
+      setTransBtn(false);
     }
-    return baseStyle;
   };
 
   if (!userData) {
@@ -155,15 +145,23 @@ const TranslationScreen = () => {
     Keyboard.dismiss();
     setTransBtn(false);
     setInputText("");
+    setTranslationResult("");
   };
-
-  const getTransViewStyle = () => ({
-    ...styles.transView,
-    bottom: inputHeight - 100,
-  });
 
   const handleImageConfirm = (uri) => {
     //console.log("URI:", uri);
+  };
+
+  const getInputStyle = () => {
+    const baseHeight = theme.screenHeight - 300;
+    const longHeight = theme.screenHeight - 150;
+
+    const baseStyle = {
+      ...styles.input,
+      height: transBtn ? longHeight : baseHeight,
+    };
+
+    return baseStyle;
   };
 
   const pickImage = () =>
@@ -179,7 +177,6 @@ const TranslationScreen = () => {
           value={inputText}
           multiline
           numberOfLines={4}
-          onContentSizeChange={handleContentSizeChange}
           placeholder="텍스트 입력"
         />
         {inputText.length > 0 && (
@@ -202,7 +199,7 @@ const TranslationScreen = () => {
             <AntDesign name="arrowright" size={24} color="black" />
             <AppText style={styles.language}>한국어</AppText>
           </View>
-          <View style={getTransViewStyle()}>
+          <View style={styles.transView}>
             <AppText style={styles.translationText}>
               {translationResult}
             </AppText>
