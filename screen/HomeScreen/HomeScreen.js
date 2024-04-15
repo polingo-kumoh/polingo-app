@@ -1,11 +1,12 @@
 // Inside HomeScreen.js
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import AppText from "../../components/common/AppText";
 import { useAuth } from "../../config/AuthContext";
 import { styles } from "./HomeScreenStyle";
+import { useUserData } from "../../hooks/useUserData";
 
 import { Ionicons } from "@expo/vector-icons";
 import HomeCarousel from "./../../components/component/HomeCarousel/index";
@@ -13,8 +14,15 @@ import { TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const HomeScreen = () => {
-  const { token, logout } = useAuth();
+  const { token } = useAuth();
+  const { error, isError } = useUserData(token);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (isError && error.response && error.response.status === 401) {
+      navigation.navigate("LoginScreen");
+    }
+  }, [isError, error, navigation]);
 
   const carouselImages = [
     {

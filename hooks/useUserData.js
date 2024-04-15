@@ -1,9 +1,9 @@
 import { useQuery } from "react-query";
-import axiosInstance from "../config/axiosInstance";
+import axios from "axios";
 
 const getUserData = async (token) => {
   try {
-    const response = await axiosInstance.get(
+    const response = await axios.get(
       `${process.env.EXPO_PUBLIC_API_URL}/api/user`,
       {
         headers: {
@@ -20,5 +20,7 @@ const getUserData = async (token) => {
 };
 
 export const useUserData = (token) => {
-  return useQuery(["userData", token], () => getUserData(token));
+  return useQuery(["userData", token], () => getUserData(token), {
+    retry: false,
+  });
 };
