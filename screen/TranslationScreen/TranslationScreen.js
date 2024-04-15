@@ -8,13 +8,19 @@ import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "./../../config/AuthContext";
 import { useUserData } from "../../hooks/useUserData";
+import ConfirmPhotoModal from "../../components/component/ConfirmPhotoModal/ConfirmPhotoModal";
 import theme from "../../config/theme";
+
+import * as ImagePicker from "expo-image-picker";
 
 const TranslationScreen = () => {
   const { token } = useAuth();
   const [isLoading, setLoading] = useState(true);
   const [inputText, setInputText] = useState("");
   const [transBtn, setTransBtn] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const { data: userData } = useUserData(token);
   const [inputHeight, setInputHeight] = useState(theme.screenHeight - 300);
 
@@ -27,6 +33,29 @@ const TranslationScreen = () => {
       setLoading(false);
     }
   }, [userData]);
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      const { status: newStatus } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (newStatus !== "granted") {
+        alert("카메라 접근 권한이 필요합니다.");
+        return;
+      }
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setSelectedImage(result.assets[0].uri);
+      setModalVisible(true);
+    }
+  };
 
   const handleContentSizeChange = (event) => {
     const newHeight = event.nativeEvent.contentSize.height;
@@ -69,6 +98,10 @@ const TranslationScreen = () => {
     ...styles.transView,
     bottom: inputHeight - 100,
   });
+
+  const handleImageConfirm = (uri) => {
+    console.log("URI:", uri);
+  };
 
   return (
     <View style={styles.container}>
@@ -124,9 +157,10 @@ const TranslationScreen = () => {
           </View>
           <View style={styles.transBtn}>
             <View style={styles.side}>
-              <TouchableOpacity style={styles.sideBtn}>
+              <TouchableOpacity style={styles.sideBtn} onPress={pickImage}>
                 <FontAwesome name="photo" size={24} color="black" />
               </TouchableOpacity>
+
               <AppText style={styles.sideText}>사진 불러오기</AppText>
             </View>
 
@@ -142,6 +176,13 @@ const TranslationScreen = () => {
           </View>
         </View>
       )}
+      <ConfirmPhotoModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        selectedImage={selectedImage}
+        onReselect={pickImage}
+        onConfirm={handleImageConfirm}
+      />
     </View>
   );
 };

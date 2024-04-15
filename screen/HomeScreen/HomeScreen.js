@@ -13,7 +13,7 @@ import { TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const HomeScreen = () => {
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const navigation = useNavigation();
 
   const carouselImages = [
@@ -64,7 +64,6 @@ const HomeScreen = () => {
           <AppText style={styles.transBtnSubText}>Polingo에서</AppText>
           <AppText style={styles.transBtnSubText}>원하는 언어 번역하기</AppText>
         </View>
-
         <MaterialCommunityIcons name="translate" size={60} color="white" />
       </TouchableOpacity>
       <View style={styles.blank_}></View>
