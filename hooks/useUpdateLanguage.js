@@ -1,14 +1,14 @@
 // src/hooks/useUpdateLanguage.js
 import { useMutation, useQueryClient } from "react-query";
-import axios from "axios";
+import axiosInstance from "../config/axiosInstance";
 
 const updateLanguage = async ({ token, language }) => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
   };
-  await axios.put(
-    `${process.env.EXPO_PUBLIC_API_URL}/api/user/language?languageCode=${language}`, // Update with your actual API endpoint
+  await axiosInstance.put(
+    `${process.env.EXPO_PUBLIC_API_URL}/api/user/language?languageCode=${language}`,
     null,
     { headers }
   );
@@ -19,8 +19,7 @@ export const useUpdateLanguage = () => {
 
   return useMutation(updateLanguage, {
     onSuccess: () => {
-      queryClient.invalidateQueries("userData"); // Adjust if your query key is different
+      queryClient.invalidateQueries("userData");
     },
-    // You might want to handle errors as well
   });
 };
