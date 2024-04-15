@@ -85,13 +85,13 @@ const ProfileScreen = () => {
         style={styles.userSetting}
         onPress={() =>
           navigation.navigate("ChangeLanguageScreen", {
-            language: userData.defaultLanguage,
+            language: userData.default_language,
           })
         }
       >
         <AppText style={styles.setting}>기본 언어 설정</AppText>
         <View style={styles.defaultView}>
-          <AppText>{userData.defaultLanguage}</AppText>
+          <AppText>{userData.default_language}</AppText>
           <MaterialIcons name="keyboard-arrow-right" size={24} color="#bbb" />
         </View>
       </TouchableOpacity>

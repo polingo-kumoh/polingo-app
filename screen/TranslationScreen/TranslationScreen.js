@@ -21,16 +21,19 @@ import usePermissions from "../../hooks/usePermissions";
 import useAudioRecorder from "../../hooks/useAudioRecorder";
 
 import * as ImagePicker from "expo-image-picker";
+import { useTextTranslate } from "./../../hooks/useTextTranslate";
 
 const TranslationScreen = () => {
   const { token } = useAuth();
   const permissions = usePermissions();
   const { startRecording, stopRecording, recordUri, isRecording } =
     useAudioRecorder();
+  const { mutate: translateText, isError, error } = useTextTranslate();
   const [isLoading, setLoading] = useState(true);
   const [inputText, setInputText] = useState("");
   const [transBtn, setTransBtn] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [translationResult, setTranslationResult] = useState("");
   const [selectedImage, setSelectedImage] = useState({
     uri: null,
     base64: null,
@@ -42,8 +45,8 @@ const TranslationScreen = () => {
   useEffect(() => {
     if (
       userData &&
-      userData.defaultLanguage &&
-      userData.defaultLanguage.length !== 0
+      userData.default_language &&
+      userData.default_language.length !== 0
     ) {
       setLoading(false);
     }
@@ -99,6 +102,25 @@ const TranslationScreen = () => {
 
   const transText = () => {
     setTransBtn(true);
+    translateText(
+      {
+        token,
+        text: inputText,
+        default_language: userData.default_language,
+      },
+      {
+        onSuccess: (data) => {
+          setTranslationResult(data.translated_text);
+        },
+        onError: (error) => {
+          console.error("Translation error:", error);
+          Alert.alert(
+            "잠시 후 다시 시도해주세요.",
+            error.message || "Failed to translate"
+          );
+        },
+      }
+    );
     Keyboard.dismiss();
   };
 
@@ -175,13 +197,15 @@ const TranslationScreen = () => {
         <>
           <View style={styles.translatedLanguage}>
             <AppText style={styles.language}>
-              {isLoading ? "Loading" : userData.defaultLanguage}
+              {isLoading ? "Loading" : userData.default_language}
             </AppText>
             <AntDesign name="arrowright" size={24} color="black" />
             <AppText style={styles.language}>한국어</AppText>
           </View>
           <View style={getTransViewStyle()}>
-            <AppText>번역본</AppText>
+            <AppText style={styles.translationText}>
+              {translationResult}
+            </AppText>
           </View>
           <TouchableOpacity
             style={styles.newTranslationBtn}
@@ -195,7 +219,7 @@ const TranslationScreen = () => {
         <View style={styles.bottom}>
           <View style={styles.translatedLanguage}>
             <AppText style={styles.language}>
-              {isLoading ? "Loading" : userData.defaultLanguage}
+              {isLoading ? "Loading" : userData.default_language}
             </AppText>
             <AntDesign name="arrowright" size={24} color="black" />
             <AppText style={styles.language}>한국어</AppText>

@@ -112,4 +112,9 @@ export const styles = StyleSheet.create({
     borderTopColor: "#CAC1FF",
     borderTopWidth: 3,
   },
+  translationText: {
+    fontSize: 30,
+    color: "#5337FF",
+    fontWeight: "600",
+  },
 });
