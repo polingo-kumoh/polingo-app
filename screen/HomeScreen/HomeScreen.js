@@ -17,7 +17,6 @@ const HomeScreen = () => {
   const { token, logout } = useAuth();
   const { error, isError } = useUserData(token);
   const navigation = useNavigation();
-
   useEffect(() => {
     if (isError) {
       if (error.response && error.response.status === 401) {

@@ -22,6 +22,7 @@ import useAudioRecorder from "../../hooks/useAudioRecorder";
 
 import * as ImagePicker from "expo-image-picker";
 import { useTextTranslate } from "./../../hooks/useTextTranslate";
+import { useImageUpload } from "./../../hooks/useImageUpload";
 
 const TranslationScreen = () => {
   const { token } = useAuth();
@@ -29,11 +30,13 @@ const TranslationScreen = () => {
   const { startRecording, stopRecording, recordUri, isRecording } =
     useAudioRecorder();
   const { mutate: translateText, isError, error } = useTextTranslate();
+  const imageUpload = useImageUpload();
   const [isLoading, setLoading] = useState(true);
   const [inputText, setInputText] = useState("");
   const [transBtn, setTransBtn] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [translationResult, setTranslationResult] = useState("");
+  const [originalText, setOriginalText] = useState("");
   const [selectedImage, setSelectedImage] = useState({
     uri: null,
     base64: null,
@@ -52,7 +55,9 @@ const TranslationScreen = () => {
   }, [userData]);
 
   useEffect(() => {
-    //console.log(recordUri);
+    if (recordUri) {
+      console.log(recordUri);
+    }
   }, [recordUri]);
 
   useEffect(() => {
@@ -78,12 +83,10 @@ const TranslationScreen = () => {
         allowsEditing: false,
         aspect: [4, 3],
         quality: 1,
-        base64: true,
       });
       if (!result.cancelled) {
         setSelectedImage({
           uri: result.assets[0].uri,
-          base64: result.assets[0].base64,
         });
         setModalVisible(true);
       }
@@ -145,11 +148,32 @@ const TranslationScreen = () => {
     Keyboard.dismiss();
     setTransBtn(false);
     setInputText("");
+    setOriginalText("");
     setTranslationResult("");
   };
 
-  const handleImageConfirm = (uri) => {
-    //console.log("URI:", uri);
+  const handleImageConfirm = (image) => {
+    imageUpload.mutate(
+      {
+        token: token,
+        uri: image.uri,
+        type: "image/jpeg",
+        name: "upload.jpg",
+        default_language: userData.default_language,
+      },
+      {
+        onSuccess: (data) => {
+          setTranslationResult(data.translated_text);
+          setOriginalText(data.original_text);
+        },
+        onError: (error) => {
+          Alert.alert(
+            "이미지 업로드 에러",
+            error.message || "Failed to upload image."
+          );
+        },
+      }
+    );
   };
 
   const getInputStyle = () => {
@@ -174,7 +198,7 @@ const TranslationScreen = () => {
         <TextInput
           style={getInputStyle()}
           onChangeText={(text) => setInputText(text)}
-          value={inputText}
+          value={originalText || inputText}
           multiline
           numberOfLines={4}
           placeholder="텍스트 입력"

@@ -20,7 +20,7 @@ const ChangeLanguageScreen = ({ route }) => {
     setSelectedLanguage(newLanguage);
     newLanguage === "ENGLISH"
       ? updateLanguageMutate({ token, language: "en" })
-      : updateLanguageMutate({ token, language: "jp" });
+      : updateLanguageMutate({ token, language: "ja" });
   };
 
   return (
@@ -36,8 +36,8 @@ const ChangeLanguageScreen = ({ route }) => {
         <View style={styles.languageView}>
           <AppText style={styles.languageText}>日本語 (일본어)</AppText>
           <Switch
-            value={selectedLanguage === "JAPAN"}
-            onValueChange={() => handleLanguageChange("JAPAN")}
+            value={selectedLanguage === "JAPANESE"}
+            onValueChange={() => handleLanguageChange("JAPANESE")}
           />
         </View>
       </View>
