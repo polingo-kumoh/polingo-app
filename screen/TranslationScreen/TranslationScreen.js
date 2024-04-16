@@ -23,6 +23,7 @@ import useAudioRecorder from "../../hooks/useAudioRecorder";
 import * as ImagePicker from "expo-image-picker";
 import { useTextTranslate } from "./../../hooks/useTextTranslate";
 import { useImageUpload } from "./../../hooks/useImageUpload";
+import { useAudioUpload } from "./../../hooks/useAudioUpload";
 
 const TranslationScreen = () => {
   const { token } = useAuth();
@@ -31,6 +32,7 @@ const TranslationScreen = () => {
     useAudioRecorder();
   const { mutate: translateText, isError, error } = useTextTranslate();
   const imageUpload = useImageUpload();
+  const audioUpload = useAudioUpload();
   const [isLoading, setLoading] = useState(true);
   const [inputText, setInputText] = useState("");
   const [transBtn, setTransBtn] = useState(false);
@@ -55,12 +57,6 @@ const TranslationScreen = () => {
   }, [userData]);
 
   useEffect(() => {
-    if (recordUri) {
-      console.log(recordUri);
-    }
-  }, [recordUri]);
-
-  useEffect(() => {
     if (permissions.status === "denied") {
       Alert.alert(
         "허가 거부",
@@ -76,6 +72,35 @@ const TranslationScreen = () => {
       );
     }
   }, [permissions.status]);
+
+  const handleAudioUpload = () => {
+    if (!recordUri) {
+      Alert.alert("녹음 오류", "잠시 후 다시 시도해주세요.");
+      return;
+    }
+
+    audioUpload.mutate(
+      {
+        token: token,
+        uri: recordUri,
+        default_language: userData.default_language,
+        type: "audio/mpeg",
+      },
+      {
+        onSuccess: (data) => {
+          Alert.alert("Upload Success", "Audio uploaded successfully!");
+          console.log(data);
+        },
+        onError: (error) => {
+          Alert.alert(
+            "Upload Error",
+            error.message || "Failed to upload audio."
+          );
+          console.error("Upload error:", error);
+        },
+      }
+    );
+  };
 
   const handleImageAction = async (action) => {
     try {
@@ -158,7 +183,6 @@ const TranslationScreen = () => {
         token: token,
         uri: image.uri,
         type: "image/jpeg",
-        name: "upload.jpg",
         default_language: userData.default_language,
       },
       {
@@ -191,6 +215,11 @@ const TranslationScreen = () => {
   const pickImage = () =>
     handleImageAction(ImagePicker.launchImageLibraryAsync);
   const takePhoto = () => handleImageAction(ImagePicker.launchCameraAsync);
+
+  const stopAndUploadAudio = async () => {
+    await stopRecording();
+    handleAudioUpload();
+  };
 
   return (
     <View style={styles.container}>
@@ -257,7 +286,7 @@ const TranslationScreen = () => {
             {isRecording ? (
               <TouchableOpacity
                 style={styles.centerBtn}
-                onPress={stopRecording}
+                onPress={stopAndUploadAudio}
               >
                 <FontAwesome name="stop-circle" size={24} color="red" />
               </TouchableOpacity>

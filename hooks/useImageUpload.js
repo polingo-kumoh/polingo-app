@@ -13,19 +13,14 @@ function getMimeType(uri) {
   return mimeTypeMap[extension] || "application/octet-stream";
 }
 
-const imageUpload = async ({
-  token,
-  uri,
-  name = "upload.jpg",
-  default_language,
-}) => {
+const imageUpload = async ({ token, uri, default_language }) => {
   const type = getMimeType(uri);
   const url = `${process.env.EXPO_PUBLIC_API_URL}/api/translate/image?source-type=${default_language}`;
   const formData = new FormData();
   formData.append("image", {
     uri: uri,
     type: type,
-    name: name,
+    name: "upload_image." + type.split("/")[1],
   });
 
   const headers = {
