@@ -14,7 +14,7 @@ const getMimeType = (uri) => {
     case "webm":
       return "audio/webm";
     default:
-      return "audio/mp3";
+      return `audio/${extension}`;
   }
 };
 

@@ -189,6 +189,7 @@ const TranslationScreen = () => {
         onSuccess: (data) => {
           setTranslationResult(data.translated_text);
           setOriginalText(data.original_text);
+          setTransBtn(true);
         },
         onError: (error) => {
           Alert.alert(
@@ -226,7 +227,10 @@ const TranslationScreen = () => {
       <View style={styles.inputWrapper}>
         <TextInput
           style={getInputStyle()}
-          onChangeText={(text) => setInputText(text)}
+          onChangeText={(text) => {
+            setInputText(text);
+            setOriginalText(text);
+          }}
           value={originalText || inputText}
           multiline
           numberOfLines={4}
