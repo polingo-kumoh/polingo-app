@@ -6,6 +6,7 @@ import HomeScreen from "../screen/HomeScreen/HomeScreen";
 import ProfileScreen from "../screen/ProfileScreen/ProfileScreen";
 import ChangeLanguageScreen from "../screen/ProfileScreen/ChangeLanguage/ChangeLanguageScreen";
 import TranslationScreen from "../screen/TranslationScreen/TranslationScreen";
+import NewsScreen from "./../screen/NewsScreen/NewsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +42,11 @@ const MainNavigator = () => {
         name="TranslationScreen"
         component={TranslationScreen}
         options={{ headerTitle: "번역 하기" }}
+      />
+      <Stack.Screen
+        name="NewsScreen"
+        component={NewsScreen}
+        options={{ headerTitle: "뉴스로 배우기" }}
       />
     </Stack.Navigator>
   );

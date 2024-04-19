@@ -33,7 +33,37 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 26,
   },
-  blank_: {
+  itemsView: {
     flex: 3,
+    marginTop: 20,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  itemView: {
+    flexDirection: "row",
+    borderColor: "#D8D8D8",
+    borderWidth: 1,
+    borderRadius: 10,
+    width: "48%",
+    padding: 15,
+    marginBottom: 20,
+    ...theme.centerStyle,
+  },
+  itemRightMargin: {
+    marginRight: 10,
+  },
+  itemTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  itemContent: {
+    fontSize: 10,
+    fontWeight: "600",
+    color: "#D8D8D8",
+  },
+  itemTextView: {
+    marginLeft: 5,
   },
 });

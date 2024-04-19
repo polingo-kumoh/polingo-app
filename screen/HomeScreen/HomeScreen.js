@@ -12,6 +12,9 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeCarousel from "./../../components/component/HomeCarousel/index";
 import { TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 
 const HomeScreen = () => {
   const { token, logout } = useAuth();
@@ -77,7 +80,44 @@ const HomeScreen = () => {
         </View>
         <MaterialCommunityIcons name="translate" size={60} color="white" />
       </TouchableOpacity>
-      <View style={styles.blank_}></View>
+      <View style={styles.itemsView}>
+        <TouchableOpacity style={styles.itemView}>
+          <MaterialIcons name="event-note" size={50} color="black" />
+          <View style={styles.itemTextView}>
+            <AppText style={styles.itemTitle}>나만의 단어장</AppText>
+            <AppText style={styles.itemContent}>단어를 카테고리로</AppText>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.itemView}>
+          <Entypo name="light-bulb" size={50} color="black" />
+          <View style={styles.itemTextView}>
+            <AppText style={styles.itemTitle}>나만의 문제집</AppText>
+            <AppText style={styles.itemContent}>단어를 문제로</AppText>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.itemView}
+          onPress={() => navigation.navigate("NewsScreen")}
+        >
+          <FontAwesome name="newspaper-o" size={50} color="black" />
+          <View style={styles.itemTextView}>
+            <AppText style={styles.itemTitle}>오늘의 뉴스</AppText>
+            <AppText style={styles.itemContent}>뉴스를 번역하여</AppText>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.itemView}>
+          <Ionicons
+            name="chatbubble-ellipses-outline"
+            size={50}
+            color="black"
+          />
+          <View style={styles.itemTextView}>
+            <AppText style={styles.itemTitle}>상황별 회화집</AppText>
+            <AppText style={styles.itemContent}>필요한 회화를 한번에</AppText>
+          </View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
