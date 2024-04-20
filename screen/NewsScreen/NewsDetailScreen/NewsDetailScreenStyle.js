@@ -5,5 +5,38 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
+    padding: 10,
+  },
+  scrollContainer: {
+    alignItems: "center",
+  },
+  linkView: {
+    width: "90%",
+    alignItems: "flex-end",
+  },
+  linkText: {
+    color: "blue",
+  },
+  newImage: {
+    width: "90%",
+    height: theme.screenHeight / 4,
+  },
+  articleTitle: {
+    fontSize: 24,
+    fontWeight: "600",
+  },
+  articleContent: {
+    fontWeight: "600",
+  },
+  translationText: {
+    fontWeight: "600",
+    borderTopColor: "#d8d8d8",
+    borderTopWidth: 1,
+  },
+  grammerText: {
+    fontWeight: "600",
+  },
+  dropDown: {
+    // Existing styles, make sure it's appropriate for a Pressable
   },
 });
