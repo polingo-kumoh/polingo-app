@@ -25,9 +25,6 @@ export const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "600",
   },
-  articleContent: {
-    fontWeight: "600",
-  },
   translationText: {
     fontWeight: "600",
     borderTopColor: "#d8d8d8",
@@ -38,5 +35,19 @@ export const styles = StyleSheet.create({
   },
   dropDown: {
     // Existing styles, make sure it's appropriate for a Pressable
+  },
+  word: {
+    fontWeight: "600",
+    lineHeight: 20,
+  },
+  activeWord: {
+    backgroundColor: "yellow",
+  },
+  sentence: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    marginBottom: 10,
+    // Apply other styling as needed
   },
 });
