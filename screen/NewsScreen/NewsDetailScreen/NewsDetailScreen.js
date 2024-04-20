@@ -13,12 +13,23 @@ import { styles } from "./NewsDetailScreenStyle";
 import AppText from "../../../components/common/AppText";
 import { AntDesign } from "@expo/vector-icons";
 
+import { useTextTranslate } from "./../../../hooks/useTextTranslate";
+import { useAuth } from "./../../../config/AuthContext";
+
 const NewsDetailScreen = ({ route }) => {
   const navigation = useNavigation();
   const { idx } = route.params;
+  const { token, default_language } = useAuth();
   const [expandedSections, setExpandedSections] = useState({});
   const [activeWordIndex, setActiveWordIndex] = useState(null);
   const [pressTimeoutId, setPressTimeoutId] = useState(null);
+  const [translation, setTranslation] = useState("");
+  const {
+    mutate: translateText,
+    isLoading,
+    isError,
+    error,
+  } = useTextTranslate();
   const data = {
     article_image: require("../../../assets/images/박근혜.png"),
     article_title:
@@ -154,23 +165,39 @@ const NewsDetailScreen = ({ route }) => {
     if (supported) {
       await Linking.openURL(url);
     } else {
-      Alert.alert(`Don't know how to open this URL: ${url}`);
+      Alert.alert(`URL이 존재하지 않습니다.: ${url}`);
     }
   };
-
-  const handleWordPress = (word, index) => {
+  const handleWordPress = (index) => {
     setActiveWordIndex(index);
+  };
 
+  const handleLongPress = (word) => {
     if (pressTimeoutId) {
       clearTimeout(pressTimeoutId);
     }
 
-    const newTimeoutId = setTimeout(() => {
-      Alert.alert(`${word}`);
-      clearActiveWord();
-    }, 1000);
-
-    setPressTimeoutId(newTimeoutId);
+    translateText(
+      {
+        token,
+        text: word,
+        default_language,
+      },
+      {
+        onSuccess: (data) => {
+          setTranslation(data.translation);
+          const timeoutId = setTimeout(() => {
+            Alert.alert("Translation", data.translation);
+            setActiveWordIndex(null);
+          }, 1000);
+          setPressTimeoutId(timeoutId);
+        },
+        onError: (err) => {
+          Alert.alert("Translation Error", err.message);
+          setActiveWordIndex(null);
+        },
+      }
+    );
   };
 
   const clearActiveWord = () => {
@@ -196,13 +223,13 @@ const NewsDetailScreen = ({ route }) => {
 
   const renderTextWithPressableWords = (text, sentenceIndex) => {
     return text.split(" ").map((word, wordIndex) => {
-      const isWordActive = activeWordIndex === `${sentenceIndex}-${wordIndex}`;
+      const index = `${sentenceIndex}-${wordIndex}`;
+      const isWordActive = activeWordIndex === index;
       return (
         <Pressable
-          key={`${sentenceIndex}-${wordIndex}`}
-          onPressIn={() =>
-            handleWordPress(word, `${sentenceIndex}-${wordIndex}`)
-          }
+          key={`${index}-${isWordActive}`}
+          onPressIn={() => handleWordPress(index)}
+          onLongPress={() => handleLongPress(word)}
           onPressOut={clearActiveWord}
         >
           <AppText style={[styles.word, isWordActive && styles.activeWord]}>
