@@ -15,6 +15,7 @@ import { AntDesign } from "@expo/vector-icons";
 
 import { useTextTranslate } from "./../../../hooks/useTextTranslate";
 import { useAuth } from "./../../../config/AuthContext";
+import { useUserData } from "../../../hooks/useUserData";
 
 const NewsDetailScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -24,6 +25,7 @@ const NewsDetailScreen = ({ route }) => {
   const [activeWordIndex, setActiveWordIndex] = useState(null);
   const [pressTimeoutId, setPressTimeoutId] = useState(null);
   const [translation, setTranslation] = useState("");
+  const { data: userData } = useUserData(token);
   const {
     mutate: translateText,
     isLoading,
@@ -181,15 +183,15 @@ const NewsDetailScreen = ({ route }) => {
       {
         token,
         text: word,
-        default_language,
+        default_language: userData.default_language,
       },
       {
         onSuccess: (data) => {
           setTranslation(data.translation);
           const timeoutId = setTimeout(() => {
-            Alert.alert("Translation", data.translation);
+            Alert.alert("Translation", data.translated_text);
             setActiveWordIndex(null);
-          }, 1000);
+          }, 500);
           setPressTimeoutId(timeoutId);
         },
         onError: (err) => {
