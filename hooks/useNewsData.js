@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import axios from "axios";
 
 const getNewsData = async (token, default_language, page, size) => {
-  const languageCode = default_language === "ENGLISH" ? "en" : "jp";
+  const languageCode = default_language === "ENGLISH" ? "en" : "ja";
   const params = new URLSearchParams({
     languageCode,
     page,
