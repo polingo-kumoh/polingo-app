@@ -46,4 +46,20 @@ export const styles = StyleSheet.create({
     bottom: 0,
     right: 5,
   },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#FFF0F0",
+    borderColor: "#FFCCCC",
+    borderWidth: 1,
+    borderRadius: 10,
+    margin: 10,
+  },
+  emptyMessage: {
+    fontSize: 16,
+    color: "grey",
+    fontWeight: "500",
+  },
 });

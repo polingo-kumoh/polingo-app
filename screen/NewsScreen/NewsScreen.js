@@ -1,26 +1,77 @@
-// Inside HomeScreen.js
-
 import React from "react";
-import { View, TouchableOpacity, Image, FlatList } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  Image,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import AppText from "../../components/common/AppText";
 import { styles } from "./NewsScreenStyle";
-import moment from "moment";
+import { useNewsData } from "../../hooks/useNewsData";
+import { useAuth } from "../../config/AuthContext";
+import { useUserData } from "../../hooks/useUserData";
+import { useScrapData } from "../../hooks/useScrapData";
 
 const NewsScreen = ({ navigation }) => {
-  const newsItems = Array.from({ length: 10 }, (_, index) => ({
-    id: String(index),
-    title: "Ousted South...",
-    content:
-      "According to a document supplied exclusively to CNN by Park's international",
-    image: require("../../assets/images/박근혜.png"),
-    publishDate: moment().subtract(index, "days").format("MMM Do YYYY"),
-  }));
+  const { token } = useAuth();
+  const { data: userData, isLoading: isUserLoading } = useUserData(token);
+  const size = 10;
+  const isLoading = isUserLoading;
+
+  const {
+    data: newsData,
+    isLoading: isNewsDataLoading,
+    isError,
+    error,
+  } = useNewsData(
+    token,
+    userData ? userData.default_language : "ENGLISH",
+    0,
+    size
+  );
+
+  const { data: scrapData, isLoading: isScrapDataLoading } = useScrapData(
+    token,
+    userData ? userData.default_language : "ENGLISH",
+    0,
+    size
+  );
+
+  if (isLoading || isNewsDataLoading || isScrapDataLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.errorContainer}>
+        <AppText>Failed to load data: {error.message}</AppText>
+      </View>
+    );
+  }
+
+  // Check if there's no content to display
+  if (
+    (!newsData || !newsData.content.length) &&
+    (!scrapData || !scrapData.content.length)
+  ) {
+    return (
+      <View style={styles.errorContainer}>
+        <AppText>아직 뉴스가 없어요!</AppText>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.newsContainer}>
         <AppText style={styles.newsTitle}>Scrap</AppText>
         <FlatList
-          data={newsItems}
+          data={scrapData.content}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item.id}
@@ -30,26 +81,43 @@ const NewsScreen = ({ navigation }) => {
               onPress={() =>
                 navigation.navigate("NewsDetailScreen", {
                   idx: item.id,
-                  title: item.title,
                 })
               }
             >
-              <Image source={item.image} style={styles.newsImage} />
+              <Image
+                source={{ uri: item.image_url }}
+                style={styles.newsImage}
+              />
               <View style={styles.newsTextContainer}>
-                <AppText style={styles.newsContentTitle}>{item.title}</AppText>
-                <AppText style={styles.newsContentsContent}>
-                  {item.content}
+                <AppText
+                  style={styles.newsContentTitle}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {item.title}
+                </AppText>
+                <AppText
+                  style={styles.newsContentsContent}
+                  numberOfLines={3}
+                  ellipsizeMode="tail"
+                >
+                  {item.first_sentence}
                 </AppText>
               </View>
-              <AppText style={styles.publishDate}>{item.publishDate}</AppText>
+              <AppText style={styles.publishDate}>{item.publish_date}</AppText>
             </TouchableOpacity>
+          )}
+          ListEmptyComponent={() => (
+            <AppText style={styles.emptyMessage}>
+              아직 스크랩 뉴스가 없어요!
+            </AppText>
           )}
         />
       </View>
       <View style={styles.newsContainer}>
         <AppText style={styles.newsTitle}>News</AppText>
         <FlatList
-          data={newsItems}
+          data={newsData.content}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item.id}
@@ -57,18 +125,36 @@ const NewsScreen = ({ navigation }) => {
             <TouchableOpacity
               style={styles.newsContents}
               onPress={() =>
-                navigation.navigate("NewsDetailScreen", { idx: item.idx })
+                navigation.navigate("NewsDetailScreen", {
+                  idx: item.id,
+                })
               }
             >
-              <Image source={item.image} style={styles.newsImage} />
+              <Image
+                source={{ uri: item.image_url }}
+                style={styles.newsImage}
+              />
               <View style={styles.newsTextContainer}>
-                <AppText style={styles.newsContentTitle}>{item.title}</AppText>
-                <AppText style={styles.newsContentsContent}>
-                  {item.content}
+                <AppText
+                  style={styles.newsContentTitle}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {item.title}
+                </AppText>
+                <AppText
+                  style={styles.newsContentsContent}
+                  numberOfLines={3}
+                  ellipsizeMode="tail"
+                >
+                  {item.first_sentence}
                 </AppText>
               </View>
-              <AppText style={styles.publishDate}>{item.publishDate}</AppText>
+              <AppText style={styles.publishDate}>{item.publish_date}</AppText>
             </TouchableOpacity>
+          )}
+          ListEmptyComponent={() => (
+            <AppText style={styles.emptyMessage}>아직 뉴스가 없어요!</AppText>
           )}
         />
       </View>
