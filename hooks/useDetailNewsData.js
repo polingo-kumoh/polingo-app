@@ -3,7 +3,6 @@ import axios from "axios";
 
 const getDetailNewsData = async (token, id) => {
   const url = `${process.env.EXPO_PUBLIC_API_URL}/api/news/${id}`;
-  console.log(url);
   try {
     const response = await axios.get(url, {
       headers: {

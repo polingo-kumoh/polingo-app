@@ -33,9 +33,7 @@ export const styles = StyleSheet.create({
   grammerText: {
     fontWeight: "600",
   },
-  dropDown: {
-    // Existing styles, make sure it's appropriate for a Pressable
-  },
+  dropDown: {},
   word: {
     fontWeight: "600",
     lineHeight: 20,
@@ -48,6 +46,11 @@ export const styles = StyleSheet.create({
     flexWrap: "wrap",
     alignItems: "center",
     marginBottom: 10,
-    // Apply other styling as needed
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "black",
+    maxWidth: 250,
   },
 });

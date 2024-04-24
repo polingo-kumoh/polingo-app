@@ -13,16 +13,21 @@ import { useNavigation } from "@react-navigation/native";
 import { styles } from "./NewsDetailScreenStyle";
 import AppText from "../../../components/common/AppText";
 import { AntDesign } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 import { useTextTranslate } from "./../../../hooks/useTextTranslate";
 import { useAuth } from "./../../../config/AuthContext";
 import { useUserData } from "../../../hooks/useUserData";
 import { useDetailNewsData } from "../../../hooks/useDetailNewsData";
+import { useNewsScrap } from "../../../hooks/useNewsScrap";
+import { useNewsUnscrap } from "../../../hooks/useNewsUnscrap";
 
 const NewsDetailScreen = ({ route }) => {
   const { token } = useAuth();
   const { idx } = route.params;
   const navigation = useNavigation();
+  const newsScrap = useNewsScrap();
+  const newsUnscrap = useNewsUnscrap();
   const { data: userData } = useUserData(token);
   const { data, isLoading, isError, error } = useDetailNewsData(token, idx);
   const { mutate: translateText } = useTextTranslate();
@@ -31,6 +36,19 @@ const NewsDetailScreen = ({ route }) => {
   const [activeWordIndex, setActiveWordIndex] = useState(null);
   const [pressTimeoutId, setPressTimeoutId] = useState(null);
   const [translation, setTranslation] = useState("");
+  const [scrap, setScrap] = useState(false);
+
+  const CustomHeaderTitle = ({ title }) => {
+    return (
+      <AppText
+        style={styles.headerTitle}
+        numberOfLines={1}
+        ellipsizeMode="tail"
+      >
+        {title}
+      </AppText>
+    );
+  };
 
   useEffect(() => {
     return () => {
@@ -42,9 +60,24 @@ const NewsDetailScreen = ({ route }) => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: data?.title,
+      headerTitle: () => <CustomHeaderTitle title={data?.title} />,
+      headerRight: () => (
+        <TouchableOpacity onPress={handleBookmark}>
+          <Ionicons
+            name={scrap ? "bookmark" : "bookmark-outline"}
+            size={24}
+            color="black"
+          />
+        </TouchableOpacity>
+      ),
     });
-  }, [navigation, data]);
+  }, [navigation, data, scrap]);
+
+  useEffect(() => {
+    if (data) {
+      setScrap(data.is_scraped);
+    }
+  }, [data]);
 
   if (isLoading) {
     return (
@@ -64,6 +97,43 @@ const NewsDetailScreen = ({ route }) => {
       </View>
     );
   }
+
+  const handleBookmark = () => {
+    if (scrap) {
+      newsUnscrap.mutate(
+        { token, id: idx },
+        {
+          onSuccess: () => {
+            setScrap(false);
+          },
+          onError: (error) => {
+            console.error("Error unscraping the news", error);
+            Alert.alert(
+              "Unscrap Failed",
+              error.message || "Failed to unscrap the news"
+            );
+          },
+        }
+      );
+    } else {
+      newsScrap.mutate(
+        { token, id: idx },
+        {
+          onSuccess: () => {
+            setScrap(true);
+            console.log("Scrap successful");
+          },
+          onError: (error) => {
+            console.error("Error scraping the news", error);
+            Alert.alert(
+              "Scrap Failed",
+              error.message || "Failed to scrap the news"
+            );
+          },
+        }
+      );
+    }
+  };
 
   const toggleSection = (index) => {
     setExpandedSections((prevExpandedSections) => ({
