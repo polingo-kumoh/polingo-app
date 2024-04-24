@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   TouchableOpacity,
@@ -18,12 +18,14 @@ const NewsScreen = ({ navigation }) => {
   const { data: userData, isLoading: isUserLoading } = useUserData(token);
   const size = 10;
   const isLoading = isUserLoading;
+  const [refreshing, setRefreshing] = useState(false);
 
   const {
     data: newsData,
     isLoading: isNewsDataLoading,
     isError,
     error,
+    refetch: refetchNewsData,
   } = useNewsData(
     token,
     userData ? userData.default_language : "ENGLISH",
@@ -31,12 +33,29 @@ const NewsScreen = ({ navigation }) => {
     size
   );
 
-  const { data: scrapData, isLoading: isScrapDataLoading } = useScrapData(
+  const {
+    data: scrapData,
+    isLoading: isScrapDataLoading,
+    refetch: refetchScrapData,
+  } = useScrapData(
     token,
     userData ? userData.default_language : "ENGLISH",
     0,
     size
   );
+
+  const onRefresh = () => {
+    setRefreshing(true);
+
+    Promise.all([refetchNewsData(), refetchScrapData()])
+      .then(() => {
+        setRefreshing(false);
+      })
+      .catch((error) => {
+        console.error("Failed to refresh data:", error);
+        setRefreshing(false);
+      });
+  };
 
   if (isLoading || isNewsDataLoading || isScrapDataLoading) {
     return (
@@ -112,6 +131,8 @@ const NewsScreen = ({ navigation }) => {
               아직 스크랩 뉴스가 없어요!
             </AppText>
           )}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
         />
       </View>
       <View style={styles.newsContainer}>
@@ -156,6 +177,8 @@ const NewsScreen = ({ navigation }) => {
           ListEmptyComponent={() => (
             <AppText style={styles.emptyMessage}>아직 뉴스가 없어요!</AppText>
           )}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
         />
       </View>
     </View>
