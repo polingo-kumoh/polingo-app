@@ -81,7 +81,10 @@ const HomeScreen = () => {
         <MaterialCommunityIcons name="translate" size={60} color="white" />
       </TouchableOpacity>
       <View style={styles.itemsView}>
-        <TouchableOpacity style={styles.itemView}>
+        <TouchableOpacity
+          style={styles.itemView}
+          onPress={() => navigation.navigate("NoteScreen")}
+        >
           <MaterialIcons name="event-note" size={50} color="black" />
           <View style={styles.itemTextView}>
             <AppText style={styles.itemTitle}>나만의 단어장</AppText>
