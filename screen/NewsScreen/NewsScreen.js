@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   TouchableOpacity,
@@ -16,23 +16,30 @@ import { useScrapData } from "../../hooks/useScrapData";
 const NewsScreen = ({ navigation }) => {
   const { token } = useAuth();
   const { data: userData, isLoading: isUserLoading } = useUserData(token);
-  const size = 10;
-  const isLoading = isUserLoading;
+  const size = 10; // Page size
+  const [newsPage, setNewsPage] = useState(0);
+  const [scrapPage, setScrapPage] = useState(0);
+  const [newsItems, setNewsItems] = useState([]);
+  const [scrapItems, setScrapItems] = useState([]);
+  const [hasMoreNews, setHasMoreNews] = useState(true);
+  const [hasMoreScrap, setHasMoreScrap] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  // Fetch news data
   const {
     data: newsData,
     isLoading: isNewsDataLoading,
-    isError,
-    error,
+    isError: isNewsError,
+    error: newsError,
     refetch: refetchNewsData,
   } = useNewsData(
     token,
     userData ? userData.default_language : "ENGLISH",
-    0,
+    newsPage,
     size
   );
 
+  // Fetch scrap data
   const {
     data: scrapData,
     isLoading: isScrapDataLoading,
@@ -40,67 +47,69 @@ const NewsScreen = ({ navigation }) => {
   } = useScrapData(
     token,
     userData ? userData.default_language : "ENGLISH",
-    0,
+    scrapPage,
     size
   );
 
-  const onRefresh = () => {
-    setRefreshing(true);
+  useEffect(() => {
+    if (newsData && newsData.content) {
+      const uniqueNews = newsData.content.filter(
+        (nd) => !newsItems.find((item) => item.id === nd.id)
+      );
+      setNewsItems((prev) => [...prev, ...uniqueNews]);
+      setHasMoreNews(!newsData.last);
+    }
+    if (scrapData && scrapData.content) {
+      const uniqueScrap = scrapData.content.filter(
+        (sd) => !scrapItems.find((item) => item.id === sd.id)
+      );
+      setScrapItems((prev) => [...prev, ...uniqueScrap]);
+      setHasMoreScrap(!scrapData.last);
+    }
+  }, [newsData, scrapData]);
 
-    Promise.all([refetchNewsData(), refetchScrapData()])
-      .then(() => {
-        setRefreshing(false);
-      })
-      .catch((error) => {
-        console.error("Failed to refresh data:", error);
-        setRefreshing(false);
-      });
+  useEffect(() => {
+    if (refreshing) {
+      refetchNewsData().then(() =>
+        refetchScrapData().then(() => setRefreshing(false))
+      );
+    }
+  }, [refreshing]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setNewsPage(0);
+    setScrapPage(0);
+    await Promise.all([refetchNewsData(), refetchScrapData()]);
+    setRefreshing(false);
   };
 
-  if (isLoading || isNewsDataLoading || isScrapDataLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+  const loadMoreNews = () => {
+    if (hasMoreNews) {
+      setNewsPage((prev) => prev + 1);
+    }
+  };
 
-  if (isError) {
-    return (
-      <View style={styles.errorContainer}>
-        <AppText>Failed to load data: {error.message}</AppText>
-      </View>
-    );
-  }
-
-  // Check if there's no content to display
-  if (
-    (!newsData || !newsData.content.length) &&
-    (!scrapData || !scrapData.content.length)
-  ) {
-    return (
-      <View style={styles.errorContainer}>
-        <AppText>아직 뉴스가 없어요!</AppText>
-      </View>
-    );
-  }
-
+  const loadMoreScrap = () => {
+    if (hasMoreScrap) {
+      setScrapPage((prev) => prev + 1);
+    }
+  };
   return (
     <View style={styles.container}>
+      {/* Scrap Section */}
       <View style={styles.newsContainer}>
         <AppText style={styles.newsTitle}>Scrap</AppText>
         <FlatList
-          data={scrapData.content}
+          data={scrapItems}
           horizontal
           showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.newsContents}
               onPress={() =>
-                navigation.navigate("NewsDetailScreen", {
-                  idx: item.id,
-                })
+                navigation.navigate("NewsDetailScreen", { idx: item.id })
               }
             >
               <Image
@@ -127,28 +136,27 @@ const NewsScreen = ({ navigation }) => {
             </TouchableOpacity>
           )}
           ListEmptyComponent={() => (
-            <AppText style={styles.emptyMessage}>
-              아직 스크랩 뉴스가 없어요!
-            </AppText>
+            <AppText style={styles.emptyMessage}>No scrap news yet!</AppText>
           )}
           refreshing={refreshing}
           onRefresh={onRefresh}
+          onEndReached={loadMoreScrap}
+          onEndReachedThreshold={0.5}
         />
       </View>
+      {/* News Section */}
       <View style={styles.newsContainer}>
         <AppText style={styles.newsTitle}>News</AppText>
         <FlatList
-          data={newsData.content}
+          data={newsItems}
           horizontal
           showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.newsContents}
               onPress={() =>
-                navigation.navigate("NewsDetailScreen", {
-                  idx: item.id,
-                })
+                navigation.navigate("NewsDetailScreen", { idx: item.id })
               }
             >
               <Image
@@ -175,10 +183,12 @@ const NewsScreen = ({ navigation }) => {
             </TouchableOpacity>
           )}
           ListEmptyComponent={() => (
-            <AppText style={styles.emptyMessage}>아직 뉴스가 없어요!</AppText>
+            <AppText style={styles.emptyMessage}>No news yet!</AppText>
           )}
           refreshing={refreshing}
           onRefresh={onRefresh}
+          onEndReached={loadMoreNews}
+          onEndReachedThreshold={0.5}
         />
       </View>
     </View>

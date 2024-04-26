@@ -105,6 +105,7 @@ const NewsDetailScreen = ({ route }) => {
         {
           onSuccess: () => {
             setScrap(false);
+            Alert.alert("언스크랩 성공", data?.title);
           },
           onError: (error) => {
             console.error("Error unscraping the news", error);
@@ -121,7 +122,7 @@ const NewsDetailScreen = ({ route }) => {
         {
           onSuccess: () => {
             setScrap(true);
-            console.log("Scrap successful");
+            Alert.alert("스크랩 성공", data?.title);
           },
           onError: (error) => {
             console.error("Error scraping the news", error);
@@ -173,7 +174,7 @@ const NewsDetailScreen = ({ route }) => {
           const timeoutId = setTimeout(() => {
             Alert.alert("Translation", data.translated_text);
             setActiveWordIndex(null);
-          }, 500);
+          }, 10);
           setPressTimeoutId(timeoutId);
         },
         onError: (err) => {
@@ -244,7 +245,7 @@ const NewsDetailScreen = ({ route }) => {
             {expandedSections[item.sentence_id] && (
               <View>
                 <AppText style={styles.translationText}>
-                  {item.translated_text}
+                  trans. {item.translated_text}
                 </AppText>
                 <AppText style={styles.grammerText}>{item.grammers}</AppText>
               </View>
