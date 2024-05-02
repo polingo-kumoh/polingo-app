@@ -123,7 +123,7 @@ const NoteScreen = ({ navigation }) => {
               { token, noteId: defaultCategoryId, wordId: selectedItems }, // Send all IDs in a single request if supported
               {
                 onSuccess: () => {
-                  refetch();
+                  wordRefetch();
                   setEditMode(false);
                   setSelectedItems([]);
                 },

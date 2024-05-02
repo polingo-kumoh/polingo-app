@@ -7,9 +7,11 @@ const deleteWord = async ({ token, noteId, wordId }) => {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
   };
+  const query = wordId.map((id) => `wordIds=${id}`).join("&");
+
   const response = await axios.delete(
-    `${process.env.EXPO_PUBLIC_API_URL}/api/wordset/${noteId}/words`,
-    { headers: headers, data: { wordId: wordId } }
+    `${process.env.EXPO_PUBLIC_API_URL}/api/wordset/${noteId}/words?${query}`,
+    { headers }
   );
   return response.data;
 };
