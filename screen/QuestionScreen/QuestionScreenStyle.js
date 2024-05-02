@@ -6,4 +6,12 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  header: {
+    flexDirection: "row",
+    ...theme.centerStyle,
+    gap: 10,
+  },
+  default: {
+    fontWeight: "600",
+  },
 });
