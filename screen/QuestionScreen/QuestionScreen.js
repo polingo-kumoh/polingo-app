@@ -61,7 +61,12 @@ const QuestionScreen = ({ navigation }) => {
             단어 카드를 좌우로 스와이프 하세요
           </AppText>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.quizItem}>
+        <TouchableOpacity
+          style={styles.quizItem}
+          onPress={() =>
+            navigation.navigate("McqScreen", { defaultCategoryId })
+          }
+        >
           <MaterialCommunityIcons
             name="numeric-4-box-multiple-outline"
             size={40}
