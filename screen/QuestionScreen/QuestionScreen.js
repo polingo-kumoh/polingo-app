@@ -31,7 +31,7 @@ const QuestionScreen = ({ navigation }) => {
       headerRight: () => (
         <TouchableOpacity
           style={styles.header}
-          onPress={() => navigation.navigate("QuestionCategorySelection")}
+          onPress={() => navigation.navigate("QuestionCategorySelectionScreen")}
         >
           <AppText style={styles.default}>{defaultCategoryName}</AppText>
           <AntDesign name="menuunfold" size={24} color="black" />
@@ -81,7 +81,10 @@ const QuestionScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.quizOptions}>
-        <TouchableOpacity style={styles.quizOption}>
+        <TouchableOpacity
+          style={styles.quizOption}
+          onPress={() => navigation.navigate("QuestionLogScreen")}
+        >
           <AppText style={styles.quizOptionTitle}>나의 학습 기록</AppText>
           <MaterialIcons name="keyboard-arrow-right" size={24} color="black" />
         </TouchableOpacity>

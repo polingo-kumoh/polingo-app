@@ -14,7 +14,8 @@ import WordEditScreen from "./../screen/NoteScreen/WordEditScreen/WordEditScreen
 import CategoryAddScreen from "../screen/NoteScreen/CategoryAddScreen/CategoryAddScreen";
 import WordAddScreen from "../screen/NewsScreen/WordAddScreen/WordAddScreen";
 import QuestionScreen from "../screen/QuestionScreen/QuestionScreen";
-import QuestionCategorySelection from "../screen/QuestionScreen/QuestionCategorySelection.js/QuestionCategorySelection";
+import QuestionCategorySelectionScreen from "../screen/QuestionScreen/QuestionCategorySelection.js/QuestionCategorySelectionScreen";
+import QuestionLogScreen from "../screen/QuestionScreen/QuestionLogScreen/QuestionLogScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -92,9 +93,14 @@ const MainNavigator = () => {
         options={{ headerTitle: "문제집" }}
       />
       <Stack.Screen
-        name="QuestionCategorySelection"
-        component={QuestionCategorySelection}
+        name="QuestionCategorySelectionScreen"
+        component={QuestionCategorySelectionScreen}
         options={{ headerTitle: "문제집 카테고리 설정" }}
+      />
+      <Stack.Screen
+        name="QuestionLogScreen"
+        component={QuestionLogScreen}
+        options={{ headerTitle: "문제집 로그 확인" }}
       />
     </Stack.Navigator>
   );
