@@ -20,7 +20,7 @@ const McqScreen = ({ navigation, route }) => {
   // const progress = quizData
   //   ? ((currentQuestionIndex + 1) / quizData.count) * 100
   //   : 0;
-  const progress = ((currentQuestionIndex + 1) / 10) * 100;
+  const progress = ((currentQuestionIndex + 1) / 9) * 100;
 
   useEffect(() => {
     if (quizData) {
@@ -28,7 +28,7 @@ const McqScreen = ({ navigation, route }) => {
       // if (currentQuestionIndex >= quizData.count) {
       //   setCurrentQuestionIndex(0);
       // }
-      if (currentQuestionIndex >= 10) {
+      if (currentQuestionIndex >= 9) {
         setCurrentQuestionIndex(0);
       }
     }
