@@ -1,7 +1,8 @@
 // Inside QuestionScreen.js
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, TouchableOpacity } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import AppText from "../../components/common/AppText";
 import { styles } from "./QuestionScreenStyle";
 import { AntDesign } from "@expo/vector-icons";
@@ -25,6 +26,12 @@ const QuestionScreen = ({ navigation }) => {
       setDefaultCategoryName(defaultItem.name);
     }
   }, [noteDataApi]);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [])
+  );
 
   useEffect(() => {
     navigation.setOptions({

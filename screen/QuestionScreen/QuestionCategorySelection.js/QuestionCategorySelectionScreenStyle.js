@@ -7,4 +7,9 @@ export const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 20,
   },
+  complete: {
+    fontWeight: "600",
+    fontSize: 18,
+    color: "#00B0F0",
+  },
 });
