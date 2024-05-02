@@ -9,6 +9,11 @@ import TranslationScreen from "../screen/TranslationScreen/TranslationScreen";
 import NewsScreen from "./../screen/NewsScreen/NewsScreen";
 import NewsDetailScreen from "./../screen/NewsScreen/NewsDetailScreen/NewsDetailScreen";
 import NoteScreen from "../screen/NoteScreen/NoteScreen";
+import CategoryEditScreen from "../screen/NoteScreen/CategoryEditScreen/CategoryEditScreen";
+import WordEditScreen from "./../screen/NoteScreen/WordEditScreen/WordEditScreen";
+import CategoryAddScreen from "../screen/NoteScreen/CategoryAddScreen/CategoryAddScreen";
+import WordAddScreen from "../screen/NewsScreen/WordAddScreen/WordAddScreen";
+import QuestionScreen from "../screen/QuestionScreen/QuestionScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -59,6 +64,31 @@ const MainNavigator = () => {
         name="NoteScreen"
         component={NoteScreen}
         options={{ headerTitle: "단어장" }}
+      />
+      <Stack.Screen
+        name="CategoryEditScreen"
+        component={CategoryEditScreen}
+        options={{ headerTitle: "카테고리 편집" }}
+      />
+      <Stack.Screen
+        name="WordEditScreen"
+        component={WordEditScreen}
+        options={{ headerTitle: "단어 편집" }}
+      />
+      <Stack.Screen
+        name="CategoryAddScreen"
+        component={CategoryAddScreen}
+        options={{ headerTitle: "카테고리 추가" }}
+      />
+      <Stack.Screen
+        name="WordAddScreen"
+        component={WordAddScreen}
+        options={{ headerTitle: "단어 추가" }}
+      />
+      <Stack.Screen
+        name="QuestionScreen"
+        component={QuestionScreen}
+        options={{ headerTitle: "문제집" }}
       />
     </Stack.Navigator>
   );

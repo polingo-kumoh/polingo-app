@@ -50,7 +50,6 @@ const HomeScreen = () => {
       example_sentence2_translate: "눈이 많이오니 안전 운전 하세요",
     },
   ];
-
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -91,7 +90,10 @@ const HomeScreen = () => {
             <AppText style={styles.itemContent}>단어를 카테고리로</AppText>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.itemView}>
+        <TouchableOpacity
+          style={styles.itemView}
+          onPress={() => navigation.navigate("QuestionScreen")}
+        >
           <Entypo name="light-bulb" size={50} color="black" />
           <View style={styles.itemTextView}>
             <AppText style={styles.itemTitle}>나만의 문제집</AppText>

@@ -8,6 +8,7 @@ import {
   Linking,
   Alert,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "./NewsDetailScreenStyle";
@@ -21,6 +22,7 @@ import { useUserData } from "../../../hooks/useUserData";
 import { useDetailNewsData } from "../../../hooks/useDetailNewsData";
 import { useNewsScrap } from "../../../hooks/useNewsScrap";
 import { useNewsUnscrap } from "../../../hooks/useNewsUnscrap";
+import { useWordDetailData } from "../../../hooks/useWordDetailData";
 
 const NewsDetailScreen = ({ route }) => {
   const { token } = useAuth();
@@ -29,13 +31,16 @@ const NewsDetailScreen = ({ route }) => {
   const newsScrap = useNewsScrap();
   const newsUnscrap = useNewsUnscrap();
   const { data: userData } = useUserData(token);
+  const [wordToFetch, setWordToFetch] = useState(null);
+  const { data: wordDetailData, isLoading: isWordDetailLoading } =
+    useWordDetailData(token, userData.default_language, wordToFetch);
   const { data, isLoading, isError, error } = useDetailNewsData(token, idx);
   const { mutate: translateText } = useTextTranslate();
 
   const [expandedSections, setExpandedSections] = useState({});
   const [activeWordIndex, setActiveWordIndex] = useState(null);
-  const [pressTimeoutId, setPressTimeoutId] = useState(null);
   const [translation, setTranslation] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [scrap, setScrap] = useState(false);
 
   const CustomHeaderTitle = ({ title }) => {
@@ -51,12 +56,11 @@ const NewsDetailScreen = ({ route }) => {
   };
 
   useEffect(() => {
-    return () => {
-      if (pressTimeoutId) {
-        clearTimeout(pressTimeoutId);
-      }
-    };
-  }, [pressTimeoutId]);
+    if (wordDetailData) {
+      setIsModalVisible(true);
+      setActiveWordIndex(null);
+    }
+  }, [wordDetailData]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -157,25 +161,22 @@ const NewsDetailScreen = ({ route }) => {
     setActiveWordIndex(index);
   };
 
-  const handleLongPress = (word) => {
-    if (pressTimeoutId) {
-      clearTimeout(pressTimeoutId);
-    }
+  const handleLongPress = async (word) => {
+    const cleanedWord = word.replace(
+      /[^\w\s\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFF]/gi,
+      ""
+    );
 
     translateText(
       {
         token,
-        text: word,
+        text: cleanedWord,
         default_language: userData.default_language,
       },
       {
-        onSuccess: (data) => {
-          setTranslation(data.translation);
-          const timeoutId = setTimeout(() => {
-            Alert.alert("Translation", data.translated_text);
-            setActiveWordIndex(null);
-          }, 10);
-          setPressTimeoutId(timeoutId);
+        onSuccess: async (data) => {
+          setWordToFetch(data.original_text);
+          setTranslation(data.translated_text);
         },
         onError: (err) => {
           Alert.alert("Translation Error", err.message);
@@ -187,9 +188,6 @@ const NewsDetailScreen = ({ route }) => {
 
   const clearActiveWord = () => {
     setActiveWordIndex(null);
-    if (pressTimeoutId) {
-      clearTimeout(pressTimeoutId);
-    }
   };
 
   const renderTextWithPressableWords = (text, sentenceIndex) => {
@@ -209,6 +207,46 @@ const NewsDetailScreen = ({ route }) => {
         </Pressable>
       );
     });
+  };
+
+  const renderModalContent = () => {
+    if (isWordDetailLoading) {
+      return <ActivityIndicator size="large" color="#0000ff" />;
+    }
+    if (wordDetailData) {
+      return (
+        <>
+          <View style={styles.originView}>
+            <AppText style={styles.modalOriginal}>
+              {wordDetailData.word}
+            </AppText>
+            <TouchableOpacity
+              onPress={() => {
+                setIsModalVisible(false);
+                navigation.navigate("WordAddScreen", {
+                  word: wordDetailData.word,
+                  description: translation,
+                });
+              }}
+            >
+              <Ionicons name="bookmark-outline" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+
+          <AppText style={styles.modalTrans}>trans. {translation}</AppText>
+          <AppText style={styles.modalText}>
+            {wordDetailData.description}
+          </AppText>
+          <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => setIsModalVisible(false)}
+          >
+            <AppText style={styles.textStyle}>닫기</AppText>
+          </Pressable>
+        </>
+      );
+    }
+    return null;
   };
 
   return (
@@ -253,6 +291,19 @@ const NewsDetailScreen = ({ route }) => {
           </View>
         ))}
       </ScrollView>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => {
+          Alert.alert("모달이 닫힙니다.");
+          setIsModalVisible(!isModalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>{renderModalContent()}</View>
+        </View>
+      </Modal>
     </View>
   );
 };
