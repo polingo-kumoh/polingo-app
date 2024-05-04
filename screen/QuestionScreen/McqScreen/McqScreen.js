@@ -60,14 +60,14 @@ const McqScreen = ({ navigation, route }) => {
     );
   }
 
-  const goToNextQuestion = () => {
+  const goToNextQuestion = (updatedAnswers) => {
     setSelectedOption(null);
     if (currentQuestionIndex < quizData?.count - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // 마지막 문제 후 결과 페이지로 이동
+      // 마지막 문제 후 결과 페이지로 이동, 업데이트된 답변 배열 전달
       navigation.navigate("ResultScreen", {
-        answers,
+        answers: updatedAnswers,
         quizData,
         defaultCategoryId,
       });
@@ -78,27 +78,24 @@ const McqScreen = ({ navigation, route }) => {
     setSelectedOption(optionId);
     setShowAnswer(true);
 
-    const updatedAnswers = [...answers];
-    const answerIndex = updatedAnswers.findIndex(
-      (answer) => answer.quiz_id === quizData.quizes[currentQuestionIndex].id
-    );
-
-    if (answerIndex > -1) {
-      updatedAnswers[answerIndex] = {
-        quiz_id: quizData.quizes[currentQuestionIndex].id,
-        selected_option_id: optionId,
-      };
-    } else {
-      updatedAnswers.push({
-        quiz_id: quizData.quizes[currentQuestionIndex].id,
-        selected_option_id: optionId,
-      });
-    }
+    // answers 배열을 먼저 업데이트
+    const newAnswer = {
+      quiz_id: quizData.quizes[currentQuestionIndex].id,
+      selected_option_id: optionId,
+    };
+    const updatedAnswers = answers.some(
+      (answer) => answer.quiz_id === newAnswer.quiz_id
+    )
+      ? answers.map((answer) =>
+          answer.quiz_id === newAnswer.quiz_id ? newAnswer : answer
+        )
+      : [...answers, newAnswer];
 
     setAnswers(updatedAnswers);
 
+    // 지연 후 다음 질문으로 넘어가도록 설정
     setTimeout(() => {
-      goToNextQuestion();
+      goToNextQuestion(updatedAnswers); // 업데이트된 답변 배열을 전달
       setShowAnswer(false); // 다음 질문으로 넘어가면서 결과 표시 리셋
     }, 1000); // 1초 후 다음 질문으로 자동 이동
   };
