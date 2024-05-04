@@ -4,8 +4,8 @@ import theme from "../../../config/theme";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#fff",
+    ...theme.centerStyle,
     paddingTop: 20,
   },
   progressBarContainer: {
@@ -22,5 +22,9 @@ export const styles = StyleSheet.create({
   progressBar: {
     height: "100%",
     backgroundColor: "blue",
+  },
+  quizCount: {
+    fontWeight: "600",
+    fontSize: 18,
   },
 });

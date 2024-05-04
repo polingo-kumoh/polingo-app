@@ -6,6 +6,8 @@ import AppText from "../../../components/common/AppText";
 import { styles } from "./McqScreenStyle";
 import { useAuth } from "../../../config/AuthContext";
 import { useQuizData } from "./../../../hooks/useQuizData";
+import QuizQuestion from "../../../components/component/QuizQuestion/QuizQuestion";
+import QuizAnswer from "../../../components/component/QuizAnswer/QuizAnswer";
 
 const McqScreen = ({ navigation, route }) => {
   const { defaultCategoryId } = route.params;
@@ -17,18 +19,13 @@ const McqScreen = ({ navigation, route }) => {
     error,
   } = useQuizData(token, defaultCategoryId);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  // const progress = quizData
-  //   ? ((currentQuestionIndex + 1) / quizData.count) * 100
-  //   : 0;
-  const progress = ((currentQuestionIndex + 1) / 9) * 100;
+  const progress = quizData
+    ? ((currentQuestionIndex + 1) / quizData.count) * 100
+    : 0;
 
   useEffect(() => {
     if (quizData) {
-      console.log("Fetched quiz data:", quizData);
-      // if (currentQuestionIndex >= quizData.count) {
-      //   setCurrentQuestionIndex(0);
-      // }
-      if (currentQuestionIndex >= 9) {
+      if (currentQuestionIndex >= quizData.count) {
         setCurrentQuestionIndex(0);
       }
     }
@@ -38,24 +35,32 @@ const McqScreen = ({ navigation, route }) => {
     console.log("Fetched quiz data:", quizData);
   }, [quizData]);
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => (
+        <View style={styles.header}>
+          <AppText style={styles.quizCount}>
+            {currentQuestionIndex + 1}/{quizData.count}
+          </AppText>
+        </View>
+      ),
+    });
+  }, [navigation]);
+
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
-  // if (isError) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <AppText>Error: {error.message}</AppText>
-  //     </View>
-  //   );
-  // }
+
+  if (isError) {
+    return (
+      <View style={styles.container}>
+        <AppText>Error: {error.message}</AppText>
+      </View>
+    );
+  }
 
   const goToNextQuestion = () => {
-    // if (currentQuestionIndex < quizData.count - 1) {
-    //   setCurrentQuestionIndex(currentQuestionIndex + 1);
-    // } else {
-    //   // Handle end of quiz
-    // }
-    if (currentQuestionIndex < 9) {
+    if (currentQuestionIndex < quizData.count - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       // Handle end of quiz
@@ -67,10 +72,14 @@ const McqScreen = ({ navigation, route }) => {
       <View style={styles.progressBarContainer}>
         <View style={[styles.progressBar, { width: `${progress}%` }]} />
       </View>
-
-      <TouchableOpacity onPress={goToNextQuestion}>
+      <QuizQuestion />
+      <QuizAnswer />
+      <QuizAnswer />
+      <QuizAnswer />
+      <QuizAnswer />
+      {/* <TouchableOpacity onPress={goToNextQuestion}>
         <AppText>Next Question</AppText>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };
