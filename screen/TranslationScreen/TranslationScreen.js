@@ -91,7 +91,7 @@ const TranslationScreen = () => {
         onSuccess: (data) => {
           setOriginalText(data.original_text);
           setTranslationResult(data.translated_text);
-          console.log(data);
+          setTransBtn(true);
         },
         onError: (error) => {
           Alert.alert(
