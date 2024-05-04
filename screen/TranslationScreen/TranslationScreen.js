@@ -73,22 +73,24 @@ const TranslationScreen = () => {
     }
   }, [permissions.status]);
 
-  const handleAudioUpload = () => {
-    if (!recordUri) {
-      Alert.alert("녹음 오류", "잠시 후 다시 시도해주세요.");
-      return;
+  useEffect(() => {
+    if (recordUri) {
+      handleAudioUpload(recordUri);
     }
+  }, [recordUri]); // recordUri 상태가 변경될 때마다 실행
 
+  const handleAudioUpload = (uri) => {
     audioUpload.mutate(
       {
         token: token,
-        uri: recordUri,
+        uri: uri,
         default_language: userData.default_language,
         type: "audio/mpeg",
       },
       {
         onSuccess: (data) => {
-          Alert.alert("Upload Success", "Audio uploaded successfully!");
+          setOriginalText(data.original_text);
+          setTranslationResult(data.translated_text);
           console.log(data);
         },
         onError: (error) => {
@@ -219,7 +221,6 @@ const TranslationScreen = () => {
 
   const stopAndUploadAudio = async () => {
     await stopRecording();
-    handleAudioUpload();
   };
 
   return (

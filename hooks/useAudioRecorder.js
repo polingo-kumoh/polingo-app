@@ -28,8 +28,7 @@ const useAudioRecorder = () => {
   const stopRecording = async () => {
     if (recording) {
       await recording.stopAndUnloadAsync();
-      const uri = recording.getURI();
-      setRecordUri(uri);
+      setRecordUri(await recording.getURI());
     }
     setRecording(null);
     setIsRecording(false);
