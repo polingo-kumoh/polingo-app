@@ -220,6 +220,7 @@ const NewsDetailScreen = ({ route }) => {
             <AppText style={styles.modalOriginal}>
               {wordDetailData.word}
             </AppText>
+
             <TouchableOpacity
               onPress={() => {
                 setIsModalVisible(false);
@@ -237,6 +238,9 @@ const NewsDetailScreen = ({ route }) => {
           <AppText style={styles.modalText}>
             {wordDetailData.description}
           </AppText>
+          <TouchableOpacity style={styles.speak}>
+            <AntDesign name="sound" size={24} color="#aaa" />
+          </TouchableOpacity>
           <Pressable
             style={[styles.button, styles.buttonClose]}
             onPress={() => setIsModalVisible(false)}
