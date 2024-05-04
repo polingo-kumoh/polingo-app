@@ -15,4 +15,16 @@ export const styles = StyleSheet.create({
     color: "#aaa",
     fontWeight: "600",
   },
+  correct: {
+    // 정답일 때 적용할 스타일
+    backgroundColor: "green",
+  },
+  incorrect: {
+    // 오답일 때 적용할 스타일
+    backgroundColor: "red",
+  },
+  selectedAnswer: {
+    color: "#fff",
+    fontWeight: "600",
+  },
 });

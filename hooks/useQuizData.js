@@ -2,7 +2,6 @@ import { useQuery } from "react-query";
 import axios from "axios";
 
 const getQuizData = async (token, id) => {
-  console.log(`${process.env.EXPO_PUBLIC_API_URL}/api/quiz/${id}/create`);
   try {
     const response = await axios.get(
       `${process.env.EXPO_PUBLIC_API_URL}/api/quiz/${id}/create`,

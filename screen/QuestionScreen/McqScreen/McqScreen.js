@@ -19,33 +19,32 @@ const McqScreen = ({ navigation, route }) => {
     error,
   } = useQuizData(token, defaultCategoryId);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [showAnswer, setShowAnswer] = useState(false);
+
   const progress = quizData
-    ? ((currentQuestionIndex + 1) / quizData.count) * 100
+    ? ((currentQuestionIndex + 1) / quizData?.count) * 100
     : 0;
 
   useEffect(() => {
     if (quizData) {
-      if (currentQuestionIndex >= quizData.count) {
-        setCurrentQuestionIndex(0);
+      if (currentQuestionIndex >= quizData?.count) {
+        setCurrentQuestionIndex(0); //또는 결과로 이동
       }
     }
   }, [quizData, currentQuestionIndex]);
-
-  useEffect(() => {
-    console.log("Fetched quiz data:", quizData);
-  }, [quizData]);
 
   useEffect(() => {
     navigation.setOptions({
       headerTitle: () => (
         <View style={styles.header}>
           <AppText style={styles.quizCount}>
-            {currentQuestionIndex + 1}/{quizData.count}
+            {currentQuestionIndex + 1}/{quizData?.count}
           </AppText>
         </View>
       ),
     });
-  }, [navigation]);
+  }, [navigation, currentQuestionIndex, quizData]);
 
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -60,11 +59,21 @@ const McqScreen = ({ navigation, route }) => {
   }
 
   const goToNextQuestion = () => {
-    if (currentQuestionIndex < quizData.count - 1) {
+    setSelectedOption(null);
+    if (currentQuestionIndex < quizData?.count - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // Handle end of quiz
+      // 퀴즈 종료 로직
     }
+  };
+
+  const handleAnswerPress = (optionId) => {
+    setSelectedOption(optionId);
+    setShowAnswer(true);
+    setTimeout(() => {
+      goToNextQuestion();
+      setShowAnswer(false); // 다음 질문으로 넘어가면서 결과 표시 리셋
+    }, 1000); // 1초 후 다음 질문으로 자동 이동
   };
 
   return (
@@ -72,14 +81,22 @@ const McqScreen = ({ navigation, route }) => {
       <View style={styles.progressBarContainer}>
         <View style={[styles.progressBar, { width: `${progress}%` }]} />
       </View>
-      <QuizQuestion />
-      <QuizAnswer />
-      <QuizAnswer />
-      <QuizAnswer />
-      <QuizAnswer />
-      {/* <TouchableOpacity onPress={goToNextQuestion}>
-        <AppText>Next Question</AppText>
-      </TouchableOpacity> */}
+      <QuizQuestion
+        question={quizData?.quizes[currentQuestionIndex].question}
+      />
+      {quizData?.quizes[currentQuestionIndex].options.map((option, index) => (
+        <QuizAnswer
+          key={index}
+          answer={option.text}
+          onPress={() => handleAnswerPress(option.option_id)}
+          isSelected={selectedOption === option.option_id}
+          isCorrect={
+            option.option_id ===
+            quizData.quizes[currentQuestionIndex].correct_id
+          }
+          showAnswer={showAnswer}
+        />
+      ))}
     </View>
   );
 };
