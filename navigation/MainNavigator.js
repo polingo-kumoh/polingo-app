@@ -17,6 +17,7 @@ import QuestionScreen from "../screen/QuestionScreen/QuestionScreen";
 import QuestionCategorySelectionScreen from "../screen/QuestionScreen/QuestionCategorySelection.js/QuestionCategorySelectionScreen";
 import QuestionLogScreen from "../screen/QuestionScreen/QuestionLogScreen/QuestionLogScreen";
 import McqScreen from "../screen/QuestionScreen/McqScreen/McqScreen";
+import ResultScreen from "../screen/QuestionScreen/ResultScreen/ResultScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -107,6 +108,11 @@ const MainNavigator = () => {
         name="McqScreen"
         component={McqScreen}
         options={{ headerTitle: "사지선다" }}
+      />
+      <Stack.Screen
+        name="ResultScreen"
+        component={ResultScreen}
+        options={{ headerTitle: "문제결과" }}
       />
     </Stack.Navigator>
   );

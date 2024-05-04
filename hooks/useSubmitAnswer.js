@@ -2,20 +2,15 @@
 import { useMutation } from "react-query";
 import axios from "axios";
 
-const submitAnswer = async ({ token, id, answerId }) => {
+const submitAnswer = async ({ token, answers }) => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
   };
-  const response = await axios.put(
+  const response = await axios.post(
     `${process.env.EXPO_PUBLIC_API_URL}/api/quiz/submit`,
     {
-      answer: [
-        {
-          quiz_id: id,
-          selected_option_id: answerId,
-        },
-      ],
+      answers,
     },
     { headers }
   );
