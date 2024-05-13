@@ -18,6 +18,7 @@ import QuestionCategorySelectionScreen from "../screen/QuestionScreen/QuestionCa
 import QuestionLogScreen from "../screen/QuestionScreen/QuestionLogScreen/QuestionLogScreen";
 import McqScreen from "../screen/QuestionScreen/McqScreen/McqScreen";
 import ResultScreen from "../screen/QuestionScreen/ResultScreen/ResultScreen";
+import FlashCardScreen from "../screen/QuestionScreen/FlashCardScreen/FlashCardScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -113,6 +114,11 @@ const MainNavigator = () => {
         name="ResultScreen"
         component={ResultScreen}
         options={{ headerTitle: "문제결과" }}
+      />
+      <Stack.Screen
+        name="FlashCardScreen"
+        component={FlashCardScreen}
+        options={{ headerTitle: "플래시카드" }}
       />
     </Stack.Navigator>
   );

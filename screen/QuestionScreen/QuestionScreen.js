@@ -50,7 +50,12 @@ const QuestionScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.quizItemView}>
-        <TouchableOpacity style={styles.quizItem}>
+        <TouchableOpacity
+          style={styles.quizItem}
+          onPress={() =>
+            navigation.navigate("FlashCardScreen", { defaultCategoryId })
+          }
+        >
           <MaterialCommunityIcons
             name="cards-outline"
             size={40}
