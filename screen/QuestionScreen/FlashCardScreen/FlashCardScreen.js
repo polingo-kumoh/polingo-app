@@ -63,7 +63,7 @@ const FlashCardScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    if (userResponses.length === quizData.count) {
+    if (userResponses.length === quizData?.count) {
       navigation.navigate("ResultScreen", {
         answers: userResponses,
         quizData,

@@ -89,7 +89,12 @@ const QuestionScreen = ({ navigation }) => {
             단어의 철자를 입력하세요
           </AppText>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.quizItem}>
+        <TouchableOpacity
+          style={styles.quizItem}
+          onPress={() =>
+            navigation.navigate("BlinkingScreen", { defaultCategoryId })
+          }
+        >
           <FontAwesome5 name="angle-double-right" size={40} color="#00B0F0" />
           <AppText style={styles.quizTitle}>깜빡이</AppText>
           <AppText style={styles.quizDescription}>
