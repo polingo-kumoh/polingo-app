@@ -20,6 +20,7 @@ import McqScreen from "../screen/QuestionScreen/McqScreen/McqScreen";
 import ResultScreen from "../screen/QuestionScreen/ResultScreen/ResultScreen";
 import FlashCardScreen from "../screen/QuestionScreen/FlashCardScreen/FlashCardScreen";
 import BlinkingScreen from "../screen/QuestionScreen/BlinkingScreen/BlinkingScreen";
+import SituationalExScreen from "../screen/SituationalExScreen/SituationalExScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -125,6 +126,11 @@ const MainNavigator = () => {
         name="BlinkingScreen"
         component={BlinkingScreen}
         options={{ headerTitle: "깜빡이" }}
+      />
+      <Stack.Screen
+        name="SituationalExScreen"
+        component={SituationalExScreen}
+        options={{ headerTitle: "상황별 예문" }}
       />
     </Stack.Navigator>
   );

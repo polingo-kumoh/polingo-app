@@ -111,7 +111,10 @@ const HomeScreen = () => {
             <AppText style={styles.itemContent}>뉴스를 번역하여</AppText>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.itemView}>
+        <TouchableOpacity
+          style={styles.itemView}
+          onPress={() => navigation.navigate("SituationalExScreen")}
+        >
           <Ionicons
             name="chatbubble-ellipses-outline"
             size={50}
