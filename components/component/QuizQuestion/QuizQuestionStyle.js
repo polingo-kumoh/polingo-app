@@ -19,4 +19,8 @@ export const styles = StyleSheet.create({
     bottom: 10,
     right: 10,
   },
+  answer: {
+    fontWeight: "600",
+    color: "blue",
+  },
 });
