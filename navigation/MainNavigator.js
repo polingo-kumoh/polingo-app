@@ -21,6 +21,7 @@ import ResultScreen from "../screen/QuestionScreen/ResultScreen/ResultScreen";
 import FlashCardScreen from "../screen/QuestionScreen/FlashCardScreen/FlashCardScreen";
 import BlinkingScreen from "../screen/QuestionScreen/BlinkingScreen/BlinkingScreen";
 import SituationalExScreen from "../screen/SituationalExScreen/SituationalExScreen";
+import SituationalExDetailScreen from "../screen/SituationalExScreen/SituationalExDetailScreen/SituationalExDetailScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -131,6 +132,11 @@ const MainNavigator = () => {
         name="SituationalExScreen"
         component={SituationalExScreen}
         options={{ headerTitle: "상황별 예문" }}
+      />
+      <Stack.Screen
+        name="SituationalExDetailScreen"
+        component={SituationalExDetailScreen}
+        options={{ headerTitle: "상황별 예문 디테일" }}
       />
     </Stack.Navigator>
   );
