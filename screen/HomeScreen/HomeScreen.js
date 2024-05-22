@@ -1,12 +1,17 @@
 // Inside HomeScreen.js
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View, Alert } from "react-native";
 import AppText from "../../components/common/AppText";
 import { useAuth } from "../../config/AuthContext";
 import { styles } from "./HomeScreenStyle";
 import { useUserData } from "../../hooks/useUserData";
+import { useWeatherEx } from "../../hooks/useWeatherEx";
+import { useDateEx } from "../../hooks/useDateEx";
+import { useTimeEx } from "../../hooks/useTimeEx";
+import { useWeekExData } from "../../hooks/useWeekExData";
+import * as Location from "expo-location";
 
 import { Ionicons } from "@expo/vector-icons";
 import HomeCarousel from "./../../components/component/HomeCarousel/index";
@@ -18,8 +23,38 @@ import { Entypo } from "@expo/vector-icons";
 
 const HomeScreen = () => {
   const { token, logout } = useAuth();
-  const { error, isError } = useUserData(token);
+  const { data: userData, isError, error } = useUserData(token);
   const navigation = useNavigation();
+  const [location, setLocation] = useState(null);
+  const currentDate = new Date().toISOString().split("T")[0];
+  const {
+    data: weatherData,
+    isError: isWeatherError,
+    error: weatherError,
+  } = useWeatherEx(
+    token,
+    userData?.default_language,
+    location?.longitude,
+    location?.latitude
+  );
+  const {
+    data: dateData,
+    isError: isDateError,
+    error: dateError,
+  } = useDateEx(token, userData?.default_language, "2024-01-01");
+
+  const {
+    data: timeData,
+    isError: isTimeError,
+    error: timeError,
+  } = useTimeEx(token, userData?.default_language);
+
+  const {
+    data: weekData,
+    isError: isWeekError,
+    error: weekError,
+  } = useTimeEx(token, userData?.default_language);
+
   useEffect(() => {
     if (isError) {
       if (error.response && error.response.status === 401) {
@@ -30,26 +65,92 @@ const HomeScreen = () => {
     }
   }, [isError, error, navigation]);
 
-  const carouselImages = [
-    {
-      source: require("../../assets/images/비.jpg"),
-      region: "구미시 옥계동",
-      temperature: "7º",
-      example_sentence1: "Can I have an umbrella, please",
-      example_sentence1_translate: "우산 하나 주세요",
-      example_sentence2: "It's raining a lot, so drive safely",
-      example_sentence2_translate: "비가 많이오니 안전 운전 하세요",
-    },
-    {
-      source: require("../../assets/images/눈.jpg"),
-      region: "구미시 옥계동",
-      temperature: "7º",
-      example_sentence1: "Can I have an umbrella, please",
-      example_sentence1_translate: "우산 하나 주세요",
-      example_sentence2: "It's snowing a lot, so drive safely",
-      example_sentence2_translate: "눈이 많이오니 안전 운전 하세요",
-    },
-  ];
+  useEffect(() => {
+    const requestLocationPermission = async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "위치 권한이 필요합니다.",
+          "위치 정보를 사용하기 위해 권한이 필요합니다."
+        );
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      setLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+    };
+
+    requestLocationPermission();
+  }, []);
+
+  const getRandomSituation = (situations) => {
+    const randomIndex = Math.floor(Math.random() * situations.length);
+    return situations[randomIndex];
+  };
+
+  const randomTimeSituation = timeData
+    ? getRandomSituation(timeData.situations)
+    : null;
+
+  const randomWeekSituation = weekData
+    ? getRandomSituation(weekData.situations)
+    : null;
+
+  const getCurrentTime = () => {
+    const now = new Date();
+    return now.toTimeString().split(" ")[0]; // 현재 시간을 HH:MM:SS 형식으로 반환
+  };
+
+  const getCurrentDayOfWeek = () => {
+    const now = new Date();
+    const daysOfWeek = [
+      "일요일",
+      "월요일",
+      "화요일",
+      "수요일",
+      "목요일",
+      "금요일",
+      "토요일",
+    ];
+    return daysOfWeek[now.getDay()]; // 현재 요일을 반환
+  };
+  const carouselImages =
+    weatherData && dateData && randomTimeSituation && randomWeekSituation
+      ? [
+          {
+            source: { uri: weatherData?.situation_image },
+            region: weatherData?.city,
+            temperature: `${weatherData?.temp}º`,
+            example_sentence1: weatherData?.sentance,
+            example_sentence1_translate: weatherData?.translate,
+          },
+          {
+            source: { uri: dateData?.situation_image },
+            region: weatherData?.city,
+            temperature: currentDate,
+            example_sentence1: dateData?.sentance,
+            example_sentence1_translate: dateData?.translate,
+          },
+          {
+            source: { uri: randomTimeSituation?.image_url },
+            region: weatherData?.city,
+            temperature: getCurrentTime(), // 현재 시간을 표시
+            example_sentence1: randomTimeSituation?.sentence,
+            example_sentence1_translate: randomTimeSituation?.translate,
+          },
+          {
+            source: { uri: randomWeekSituation?.image_url },
+            region: weatherData?.city,
+            temperature: getCurrentDayOfWeek(), // 오늘의 요일을 표시
+            example_sentence1: randomWeekSituation?.sentence,
+            example_sentence1_translate: randomWeekSituation?.translate,
+          },
+        ]
+      : [];
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -62,7 +163,6 @@ const HomeScreen = () => {
       ),
     });
   }, [navigation]);
-
   return (
     <View style={styles.container}>
       <View style={styles.carouselView}>
