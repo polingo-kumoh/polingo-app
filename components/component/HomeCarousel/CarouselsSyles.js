@@ -10,7 +10,6 @@ export const styles = StyleSheet.create({
     width: theme.screenWidth - 40,
     height: theme.screenHeight / 4,
     borderRadius: 10,
-    opacity: 0.5,
   },
   overlayTextView: {
     position: "absolute",
@@ -20,7 +19,16 @@ export const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "flex-start",
+    color: "#fff",
     padding: 20,
+  },
+  overlayView: {
+    position: "absolute",
+
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // 검은색 반투명 오버레이
+    borderRadius: 10,
+    width: theme.screenWidth - 40,
+    height: theme.screenHeight / 4,
   },
   overlayTitle: {
     alignSelf: "center",
@@ -32,6 +40,7 @@ export const styles = StyleSheet.create({
     lineHeight: 28,
     textAlign: "center",
     marginBottom: 4,
+    color: "#fff",
   },
   exampleSentence: {
     fontSize: 16,
@@ -39,11 +48,13 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
     textAlign: "center",
     marginBottom: 4,
+    color: "#fff",
   },
   temperatureText: {
     fontSize: 24,
     fontWeight: "bold",
     lineHeight: 28,
+    color: "#fff",
     textAlign: "center",
     marginBottom: 4,
   },
@@ -53,5 +64,6 @@ export const styles = StyleSheet.create({
     textAlign: "left",
     fontWeight: "600",
     marginBottom: 4,
+    color: "#fff",
   },
 });

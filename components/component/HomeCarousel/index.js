@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { View, Image } from "react-native";
 import Carousel from "react-native-snap-carousel";
 import theme from "./../../../config/theme";
@@ -12,6 +12,7 @@ const HomeCarousel = (props) => {
   const renderItem = ({ item }) => (
     <View style={styles.carouselView}>
       <Image source={item.source} style={styles.carouselImage} />
+      <View style={styles.overlayView} />
       <View style={styles.overlayTextView}>
         <View style={styles.overlayTitle}>
           <AppText style={styles.regionText}>{item.region}</AppText>
