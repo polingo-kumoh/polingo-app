@@ -171,7 +171,9 @@ const SituationalExScreen = ({ navigation }) => {
           />
         </View>
         <View>
-          <AppText style={styles.bannerText}>현재 공항에 계시나요?</AppText>
+          <AppText style={styles.bannerText}>
+            공항에서의 회화가 필요하시나요?
+          </AppText>
           <AppText style={styles.bannerText}>
             Polingo에서 회화집을 확인하세요.
           </AppText>
