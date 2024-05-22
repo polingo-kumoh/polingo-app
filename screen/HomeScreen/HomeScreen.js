@@ -9,6 +9,8 @@ import { styles } from "./HomeScreenStyle";
 import { useUserData } from "../../hooks/useUserData";
 import { useWeatherEx } from "../../hooks/useWeatherEx";
 import { useDateEx } from "../../hooks/useDateEx";
+import { useTimeEx } from "../../hooks/useTimeEx";
+import { useWeekExData } from "../../hooks/useWeekExData";
 import * as Location from "expo-location";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -41,6 +43,18 @@ const HomeScreen = () => {
     error: dateError,
   } = useDateEx(token, userData?.default_language, "2024-01-01");
 
+  const {
+    data: timeData,
+    isError: isTimeError,
+    error: timeError,
+  } = useTimeEx(token, userData?.default_language);
+
+  const {
+    data: weekData,
+    isError: isWeekError,
+    error: weekError,
+  } = useTimeEx(token, userData?.default_language);
+
   useEffect(() => {
     if (isError) {
       if (error.response && error.response.status === 401) {
@@ -72,24 +86,70 @@ const HomeScreen = () => {
     requestLocationPermission();
   }, []);
 
-  const carouselImages = weatherData
-    ? [
-        {
-          source: { uri: weatherData?.situation_image },
-          region: weatherData?.city,
-          temperature: `${weatherData?.temp}º`,
-          example_sentence1: weatherData?.sentance,
-          example_sentence1_translate: weatherData?.translate,
-        },
-        {
-          source: { uri: dateData?.situation_image },
-          region: weatherData?.city,
-          temperature: currentDate,
-          example_sentence1: dateData?.sentance,
-          example_sentence1_translate: dateData?.translate,
-        },
-      ]
-    : [];
+  const getRandomSituation = (situations) => {
+    const randomIndex = Math.floor(Math.random() * situations.length);
+    return situations[randomIndex];
+  };
+
+  const randomTimeSituation = timeData
+    ? getRandomSituation(timeData.situations)
+    : null;
+
+  const randomWeekSituation = weekData
+    ? getRandomSituation(weekData.situations)
+    : null;
+
+  const getCurrentTime = () => {
+    const now = new Date();
+    return now.toTimeString().split(" ")[0]; // 현재 시간을 HH:MM:SS 형식으로 반환
+  };
+
+  const getCurrentDayOfWeek = () => {
+    const now = new Date();
+    const daysOfWeek = [
+      "일요일",
+      "월요일",
+      "화요일",
+      "수요일",
+      "목요일",
+      "금요일",
+      "토요일",
+    ];
+    return daysOfWeek[now.getDay()]; // 현재 요일을 반환
+  };
+  const carouselImages =
+    weatherData && dateData && randomTimeSituation && randomWeekSituation
+      ? [
+          {
+            source: { uri: weatherData?.situation_image },
+            region: weatherData?.city,
+            temperature: `${weatherData?.temp}º`,
+            example_sentence1: weatherData?.sentance,
+            example_sentence1_translate: weatherData?.translate,
+          },
+          {
+            source: { uri: dateData?.situation_image },
+            region: weatherData?.city,
+            temperature: currentDate,
+            example_sentence1: dateData?.sentance,
+            example_sentence1_translate: dateData?.translate,
+          },
+          {
+            source: { uri: randomTimeSituation?.image_url },
+            region: weatherData?.city,
+            temperature: getCurrentTime(), // 현재 시간을 표시
+            example_sentence1: randomTimeSituation?.sentence,
+            example_sentence1_translate: randomTimeSituation?.translate,
+          },
+          {
+            source: { uri: randomWeekSituation?.image_url },
+            region: weatherData?.city,
+            temperature: getCurrentDayOfWeek(), // 오늘의 요일을 표시
+            example_sentence1: randomWeekSituation?.sentence,
+            example_sentence1_translate: randomWeekSituation?.translate,
+          },
+        ]
+      : [];
 
   React.useLayoutEffect(() => {
     navigation.setOptions({

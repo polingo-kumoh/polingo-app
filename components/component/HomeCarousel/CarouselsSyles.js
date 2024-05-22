@@ -51,6 +51,7 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 18,
     textAlign: "left",
+    fontWeight: "600",
     marginBottom: 4,
   },
 });
