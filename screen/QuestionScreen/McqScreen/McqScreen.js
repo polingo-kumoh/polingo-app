@@ -1,7 +1,7 @@
 // Inside McqScreen.js
 
-import React, { useEffect, useState } from "react";
-import { View, ActivityIndicator, TouchableOpacity } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import { View, ActivityIndicator } from "react-native";
 import AppText from "../../../components/common/AppText";
 import { styles } from "./McqScreenStyle";
 import { useAuth } from "../../../config/AuthContext";
@@ -23,6 +23,9 @@ const McqScreen = ({ navigation, route }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [showAnswer, setShowAnswer] = useState(false);
   const [answers, setAnswers] = useState([]);
+  const [timeLeft, setTimeLeft] = useState(10); // 질문당 10초 제한
+
+  const timerRef = useRef(null);
 
   const progress = quizData
     ? ((currentQuestionIndex + 1) / quizData?.count) * 100
@@ -34,6 +37,7 @@ const McqScreen = ({ navigation, route }) => {
     setSelectedOption(null);
     setShowAnswer(false);
     setAnswers([]);
+    startTimer();
   }, [route.params]);
 
   useEffect(() => {
@@ -48,17 +52,54 @@ const McqScreen = ({ navigation, route }) => {
     });
   }, [navigation, currentQuestionIndex, quizData]);
 
-  if (isLoading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
-  }
+  useEffect(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
 
-  if (isError) {
-    return (
-      <View style={styles.container}>
-        <AppText>Error: {error.message}</AppText>
-      </View>
+    startTimer();
+
+    return () => {
+      clearInterval(timerRef.current);
+    };
+  }, [currentQuestionIndex]);
+
+  const startTimer = () => {
+    setTimeLeft(10); // 질문당 10초로 초기화
+
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(timerRef.current);
+          handleTimeUp();
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+  };
+
+  const handleTimeUp = () => {
+    // 오답으로 처리
+    const currentQuestion = quizData.quizes[currentQuestionIndex];
+    const incorrectOption = currentQuestion.options.find(
+      (option) => option.option_id !== currentQuestion.correct_id
     );
-  }
+
+    const newAnswer = {
+      quiz_id: currentQuestion.id,
+      selected_option_id: incorrectOption.option_id, // correct_id가 아닌 id값 설정
+    };
+    const updatedAnswers = [...answers, newAnswer];
+
+    setAnswers(updatedAnswers);
+    setShowAnswer(true); // 정답 표시
+
+    // 일정 시간 후 다음 질문으로 이동
+    setTimeout(() => {
+      goToNextQuestion(updatedAnswers);
+      setShowAnswer(false); // 다음 질문으로 넘어가면서 결과 표시 리셋
+    }, 2000); // 2초 후 다음 질문으로 이동
+  };
 
   const goToNextQuestion = (updatedAnswers) => {
     setSelectedOption(null);
@@ -100,11 +141,36 @@ const McqScreen = ({ navigation, route }) => {
     }, 1000); // 1초 후 다음 질문으로 자동 이동
   };
 
+  const getTimerTextStyle = () => {
+    if (timeLeft >= 7) {
+      return styles.timerGreen;
+    } else if (timeLeft >= 4) {
+      return styles.timerYellow;
+    } else {
+      return styles.timerRed;
+    }
+  };
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.container}>
+        <AppText>Error: {error.message}</AppText>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.progressBarContainer}>
         <View style={[styles.progressBar, { width: `${progress}%` }]} />
       </View>
+      <AppText style={[styles.timerText, getTimerTextStyle()]}>
+        {timeLeft}s
+      </AppText>
       <QuizQuestion
         question={quizData?.quizes[currentQuestionIndex]?.question}
       />

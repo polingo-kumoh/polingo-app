@@ -27,4 +27,19 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 18,
   },
+  timerText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  timerGreen: {
+    color: "green",
+  },
+  timerYellow: {
+    color: "orange",
+  },
+  timerRed: {
+    color: "red",
+  },
 });

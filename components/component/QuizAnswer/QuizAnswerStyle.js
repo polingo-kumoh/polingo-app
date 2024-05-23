@@ -12,7 +12,6 @@ export const styles = StyleSheet.create({
     ...theme.centerStyle,
   },
   answer: {
-    color: "#aaa",
     fontWeight: "600",
   },
   correct: {
