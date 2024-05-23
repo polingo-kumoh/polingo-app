@@ -1,5 +1,3 @@
-// Inside TranslationScreen.js
-
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -8,6 +6,7 @@ import {
   Keyboard,
   Alert,
   Linking,
+  ActivityIndicator,
 } from "react-native";
 import AppText from "../../components/common/AppText";
 import { styles } from "./TranslationScreenStyle";
@@ -77,9 +76,10 @@ const TranslationScreen = () => {
     if (recordUri) {
       handleAudioUpload(recordUri);
     }
-  }, [recordUri]); // recordUri 상태가 변경될 때마다 실행
+  }, [recordUri]);
 
   const handleAudioUpload = (uri) => {
+    setLoading(true); // 로딩 시작
     audioUpload.mutate(
       {
         token: token,
@@ -92,6 +92,7 @@ const TranslationScreen = () => {
           setOriginalText(data.original_text);
           setTranslationResult(data.translated_text);
           setTransBtn(true);
+          setLoading(false); // 로딩 종료
         },
         onError: (error) => {
           Alert.alert(
@@ -99,6 +100,7 @@ const TranslationScreen = () => {
             error.message || "Failed to upload audio."
           );
           console.error("Upload error:", error);
+          setLoading(false); // 로딩 종료
         },
       }
     );
@@ -127,7 +129,7 @@ const TranslationScreen = () => {
 
     if (shouldTranslate) {
       setTransBtn(true);
-      setLoading(true);
+      setLoading(true); // 로딩 시작
       translateText(
         {
           token,
@@ -137,7 +139,7 @@ const TranslationScreen = () => {
         {
           onSuccess: (data) => {
             setTranslationResult(data.translated_text);
-            setLoading(false);
+            setLoading(false); // 로딩 종료
           },
           onError: (error) => {
             console.error("Translation error:", error);
@@ -145,7 +147,7 @@ const TranslationScreen = () => {
               "Translation Error",
               error.message || "Failed to translate. Please try again later."
             );
-            setLoading(false);
+            setLoading(false); // 로딩 종료
           },
         }
       );
@@ -180,6 +182,7 @@ const TranslationScreen = () => {
   };
 
   const handleImageConfirm = (image) => {
+    setLoading(true); // 로딩 시작
     imageUpload.mutate(
       {
         token: token,
@@ -192,12 +195,14 @@ const TranslationScreen = () => {
           setTranslationResult(data.translated_text);
           setOriginalText(data.original_text);
           setTransBtn(true);
+          setLoading(false); // 로딩 종료
         },
         onError: (error) => {
           Alert.alert(
             "이미지 업로드 에러",
             error.message || "Failed to upload image."
           );
+          setLoading(false); // 로딩 종료
         },
       }
     );
@@ -225,6 +230,13 @@ const TranslationScreen = () => {
 
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <ActivityIndicator
+          size="large"
+          color="#0000ff"
+          style={styles.loadingIndicator}
+        />
+      )}
       <View style={styles.inputWrapper}>
         <TextInput
           style={getInputStyle()}

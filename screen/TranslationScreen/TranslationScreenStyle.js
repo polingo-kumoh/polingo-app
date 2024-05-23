@@ -117,4 +117,11 @@ export const styles = StyleSheet.create({
     color: "#5337FF",
     fontWeight: "600",
   },
+  loadingIndicator: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [{ translateX: -25 }, { translateY: -25 }],
+    zIndex: 1,
+  },
 });
