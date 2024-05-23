@@ -86,9 +86,6 @@ export const styles = StyleSheet.create({
     marginTop: 40,
   },
   newTranslationBtn: {
-    position: "absolute",
-    bottom: 110,
-    right: 10,
     backgroundColor: "#CAC1FF",
     padding: 20,
     flexDirection: "row",
@@ -99,8 +96,25 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 10,
     elevation: 5,
+    marginTop: 10,
   },
   newTranslationText: {
+    fontWeight: "bold",
+  },
+  saveWordBtn: {
+    backgroundColor: "#CAC1FF",
+    padding: 20,
+    flexDirection: "row",
+    borderRadius: 10,
+    gap: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 5,
+    marginTop: 10,
+  },
+  saveWordText: {
     fontWeight: "bold",
   },
   transView: {
@@ -123,5 +137,12 @@ export const styles = StyleSheet.create({
     left: "50%",
     transform: [{ translateX: -25 }, { translateY: -25 }],
     zIndex: 1,
+  },
+  translationActions: {
+    position: "absolute",
+    bottom: 110,
+    right: 10,
+    flexDirection: "row",
+    gap: 10,
   },
 });

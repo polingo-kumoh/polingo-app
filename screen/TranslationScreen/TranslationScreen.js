@@ -274,13 +274,24 @@ const TranslationScreen = () => {
               {translationResult}
             </AppText>
           </View>
-          <TouchableOpacity
-            style={styles.newTranslationBtn}
-            onPress={resetTranslation}
-          >
-            <AntDesign name="plus" size={16} color="black" />
-            <AppText style={styles.newTranslationText}>새 번역</AppText>
-          </TouchableOpacity>
+          <View style={styles.translationActions}>
+            <TouchableOpacity
+              style={styles.saveWordBtn}
+              onPress={() => {
+                // Add your save word functionality here
+              }}
+            >
+              <FontAwesome name="save" size={16} color="black" />
+              <AppText style={styles.saveWordText}>단어 저장</AppText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.newTranslationBtn}
+              onPress={resetTranslation}
+            >
+              <AntDesign name="plus" size={16} color="black" />
+              <AppText style={styles.newTranslationText}>새 번역</AppText>
+            </TouchableOpacity>
+          </View>
         </>
       ) : (
         <View style={styles.bottom}>
