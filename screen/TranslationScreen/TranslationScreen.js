@@ -5,8 +5,9 @@ import {
   TouchableOpacity,
   Keyboard,
   Alert,
-  Linking,
   ActivityIndicator,
+  Text,
+  Modal,
 } from "react-native";
 import AppText from "../../components/common/AppText";
 import { styles } from "./TranslationScreenStyle";
@@ -18,32 +19,41 @@ import ConfirmPhotoModal from "../../components/component/ConfirmPhotoModal/Conf
 import theme from "../../config/theme";
 import usePermissions from "../../hooks/usePermissions";
 import useAudioRecorder from "../../hooks/useAudioRecorder";
-
 import * as ImagePicker from "expo-image-picker";
 import { useTextTranslate } from "./../../hooks/useTextTranslate";
 import { useImageUpload } from "./../../hooks/useImageUpload";
 import { useAudioUpload } from "./../../hooks/useAudioUpload";
+import { useWordDetailData } from "../../hooks/useWordDetailData";
+import WordDetailModal from "./../../components/component/WordDetailMoal/WordDetailModal";
 
-const TranslationScreen = () => {
+const TranslationScreen = ({ navigation }) => {
   const { token } = useAuth();
   const permissions = usePermissions();
   const { startRecording, stopRecording, recordUri, isRecording } =
     useAudioRecorder();
-  const { mutate: translateText, isError, error } = useTextTranslate();
+  const { mutate: translateText } = useTextTranslate();
   const imageUpload = useImageUpload();
   const audioUpload = useAudioUpload();
   const [isLoading, setLoading] = useState(true);
   const [inputText, setInputText] = useState("");
   const [transBtn, setTransBtn] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [saveModalVisible, setSaveModalVisible] = useState(false);
   const [translationResult, setTranslationResult] = useState("");
   const [originalText, setOriginalText] = useState("");
   const [selectedImage, setSelectedImage] = useState({
     uri: null,
     base64: null,
   });
-
+  const [wordToFetch, setWordToFetch] = useState(null);
+  const [activeWord, setActiveWord] = useState("");
+  const [longPressWordTran, setLongPressWordTran] = useState("");
+  const [isTranslationLoading, setIsTranslationLoading] = useState(false);
+  const [isWordModalVisible, setIsWordModalVisible] = useState(false);
   const { data: userData } = useUserData(token);
+
+  const { data: wordDetailData, refetch: refetchWordDetailData } =
+    useWordDetailData(token, userData?.default_language, wordToFetch);
 
   useEffect(() => {
     if (
@@ -78,8 +88,14 @@ const TranslationScreen = () => {
     }
   }, [recordUri]);
 
+  useEffect(() => {
+    if (wordToFetch) {
+      refetchWordDetailData();
+    }
+  }, [wordToFetch]);
+
   const handleAudioUpload = (uri) => {
-    setLoading(true); // 로딩 시작
+    setLoading(true);
     audioUpload.mutate(
       {
         token: token,
@@ -92,7 +108,7 @@ const TranslationScreen = () => {
           setOriginalText(data.original_text);
           setTranslationResult(data.translated_text);
           setTransBtn(true);
-          setLoading(false); // 로딩 종료
+          setLoading(false);
         },
         onError: (error) => {
           Alert.alert(
@@ -100,7 +116,7 @@ const TranslationScreen = () => {
             error.message || "Failed to upload audio."
           );
           console.error("Upload error:", error);
-          setLoading(false); // 로딩 종료
+          setLoading(false);
         },
       }
     );
@@ -114,9 +130,7 @@ const TranslationScreen = () => {
         quality: 1,
       });
       if (!result.cancelled) {
-        setSelectedImage({
-          uri: result.assets[0].uri,
-        });
+        setSelectedImage({ uri: result.assets[0].uri });
         setModalVisible(true);
       }
     } catch (error) {
@@ -126,10 +140,9 @@ const TranslationScreen = () => {
 
   const transText = () => {
     const shouldTranslate = inputText.trim().length > 0;
-
     if (shouldTranslate) {
       setTransBtn(true);
-      setLoading(true); // 로딩 시작
+      setLoading(true);
       translateText(
         {
           token,
@@ -139,7 +152,7 @@ const TranslationScreen = () => {
         {
           onSuccess: (data) => {
             setTranslationResult(data.translated_text);
-            setLoading(false); // 로딩 종료
+            setLoading(false);
           },
           onError: (error) => {
             console.error("Translation error:", error);
@@ -147,7 +160,7 @@ const TranslationScreen = () => {
               "Translation Error",
               error.message || "Failed to translate. Please try again later."
             );
-            setLoading(false); // 로딩 종료
+            setLoading(false);
           },
         }
       );
@@ -182,7 +195,7 @@ const TranslationScreen = () => {
   };
 
   const handleImageConfirm = (image) => {
-    setLoading(true); // 로딩 시작
+    setLoading(true);
     imageUpload.mutate(
       {
         token: token,
@@ -195,14 +208,14 @@ const TranslationScreen = () => {
           setTranslationResult(data.translated_text);
           setOriginalText(data.original_text);
           setTransBtn(true);
-          setLoading(false); // 로딩 종료
+          setLoading(false);
         },
         onError: (error) => {
           Alert.alert(
             "이미지 업로드 에러",
             error.message || "Failed to upload image."
           );
-          setLoading(false); // 로딩 종료
+          setLoading(false);
         },
       }
     );
@@ -211,21 +224,53 @@ const TranslationScreen = () => {
   const getInputStyle = () => {
     const baseHeight = theme.screenHeight - 300;
     const longHeight = theme.screenHeight - 150;
-
     const baseStyle = {
       ...styles.input,
       height: transBtn ? longHeight : baseHeight,
     };
-
     return baseStyle;
   };
 
   const pickImage = () =>
     handleImageAction(ImagePicker.launchImageLibraryAsync);
   const takePhoto = () => handleImageAction(ImagePicker.launchCameraAsync);
-
   const stopAndUploadAudio = async () => {
     await stopRecording();
+  };
+
+  const handleWordLongPress = (word) => {
+    setActiveWord(word);
+    setIsTranslationLoading(true);
+    setIsWordModalVisible(true); // 여기서 모달을 바로 보여줌
+    translateText(
+      {
+        token,
+        text: word,
+        default_language: userData.default_language,
+      },
+      {
+        onSuccess: (data) => {
+          setWordToFetch(data.original_text);
+          setLongPressWordTran(data.translated_text);
+          setIsTranslationLoading(false);
+        },
+        onError: (error) => {
+          Alert.alert("Translation Error", error.message);
+          setIsTranslationLoading(false);
+        },
+      }
+    );
+  };
+
+  const renderWords = (text) => {
+    return text.split(" ").map((word, index) => (
+      <TouchableOpacity
+        key={index}
+        onLongPress={() => handleWordLongPress(word)}
+      >
+        <Text style={styles.word}>{word} </Text>
+      </TouchableOpacity>
+    ));
   };
 
   return (
@@ -274,13 +319,22 @@ const TranslationScreen = () => {
               {translationResult}
             </AppText>
           </View>
-          <TouchableOpacity
-            style={styles.newTranslationBtn}
-            onPress={resetTranslation}
-          >
-            <AntDesign name="plus" size={16} color="black" />
-            <AppText style={styles.newTranslationText}>새 번역</AppText>
-          </TouchableOpacity>
+          <View style={styles.translationActions}>
+            <TouchableOpacity
+              style={styles.saveWordBtn}
+              onPress={() => setSaveModalVisible(true)}
+            >
+              <FontAwesome name="save" size={16} color="black" />
+              <AppText style={styles.saveWordText}>단어 저장</AppText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.newTranslationBtn}
+              onPress={resetTranslation}
+            >
+              <AntDesign name="plus" size={16} color="black" />
+              <AppText style={styles.newTranslationText}>새 번역</AppText>
+            </TouchableOpacity>
+          </View>
         </>
       ) : (
         <View style={styles.bottom}>
@@ -296,10 +350,8 @@ const TranslationScreen = () => {
               <TouchableOpacity style={styles.sideBtn} onPress={pickImage}>
                 <FontAwesome name="photo" size={24} color="black" />
               </TouchableOpacity>
-
               <AppText style={styles.sideText}>사진 불러오기</AppText>
             </View>
-
             {isRecording ? (
               <TouchableOpacity
                 style={styles.centerBtn}
@@ -330,6 +382,38 @@ const TranslationScreen = () => {
         selectedImage={selectedImage}
         onReselect={pickImage}
         onConfirm={handleImageConfirm}
+      />
+      <Modal
+        visible={saveModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setSaveModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <AppText style={styles.modalTitle}>
+              단어를 저장하려면 길게 누르세요
+            </AppText>
+            <View style={styles.wordsContainer}>
+              {renderWords(originalText)}
+            </View>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setSaveModalVisible(false)}
+            >
+              <AppText style={styles.modalCloseButtonText}>닫기</AppText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <WordDetailModal
+        visible={isWordModalVisible}
+        onClose={() => setIsWordModalVisible(false)}
+        wordDetailData={wordDetailData}
+        translation={longPressWordTran}
+        isTranslationLoading={isTranslationLoading}
+        navigation={navigation}
+        setIsTranslationLoading={setIsTranslationLoading}
       />
     </View>
   );

@@ -8,7 +8,6 @@ import {
   Linking,
   Alert,
   ActivityIndicator,
-  Modal,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "./NewsDetailScreenStyle";
@@ -23,6 +22,8 @@ import { useDetailNewsData } from "../../../hooks/useDetailNewsData";
 import { useNewsScrap } from "../../../hooks/useNewsScrap";
 import { useNewsUnscrap } from "../../../hooks/useNewsUnscrap";
 import { useWordDetailData } from "../../../hooks/useWordDetailData";
+
+import WordDetailModal from "../../../components/component/WordDetailMoal/WordDetailModal";
 
 const NewsDetailScreen = ({ route }) => {
   const { token } = useAuth();
@@ -167,6 +168,7 @@ const NewsDetailScreen = ({ route }) => {
       Alert.alert(`URL이 존재하지 않습니다.: ${url}`);
     }
   };
+
   const handleWordPress = (index) => {
     setActiveWordIndex(index);
   };
@@ -224,49 +226,6 @@ const NewsDetailScreen = ({ route }) => {
     });
   };
 
-  const renderModalContent = () => {
-    if (isTranslationLoading) {
-      return <ActivityIndicator size="large" color="#0000ff" />;
-    }
-    if (wordDetailData) {
-      return (
-        <>
-          <View style={styles.originView}>
-            <AppText style={styles.modalOriginal}>
-              {wordDetailData.word}
-            </AppText>
-
-            <TouchableOpacity
-              onPress={() => {
-                setIsModalVisible(false);
-                navigation.navigate("WordAddScreen", {
-                  word: wordDetailData.word,
-                  description: translation,
-                });
-              }}
-            >
-              <Ionicons name="bookmark-outline" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-
-          <AppText style={styles.modalTrans}>trans. {translation}</AppText>
-          <AppText style={styles.modalText}>
-            {wordDetailData.description}
-          </AppText>
-          <TouchableOpacity style={styles.speak}>
-            <AntDesign name="sound" size={24} color="#aaa" />
-          </TouchableOpacity>
-          <Pressable
-            style={[styles.button, styles.buttonClose]}
-            onPress={() => setIsModalVisible(false)}
-          >
-            <AppText style={styles.textStyle}>닫기</AppText>
-          </Pressable>
-        </>
-      );
-    }
-    return null;
-  };
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -279,7 +238,6 @@ const NewsDetailScreen = ({ route }) => {
             </AppText>
           </TouchableOpacity>
         </View>
-
         <AppText style={styles.articleTitle}>{data?.title}</AppText>
         {data.sentences?.map((item) => (
           <View key={item.sentence_id}>
@@ -312,19 +270,15 @@ const NewsDetailScreen = ({ route }) => {
           </View>
         ))}
       </ScrollView>
-      <Modal
-        animationType="slide"
-        transparent={true}
+      <WordDetailModal
         visible={isModalVisible}
-        onRequestClose={() => {
-          Alert.alert("모달이 닫힙니다.");
-          setIsModalVisible(!isModalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>{renderModalContent()}</View>
-        </View>
-      </Modal>
+        onClose={() => setIsModalVisible(false)}
+        wordDetailData={wordDetailData}
+        translation={translation}
+        isTranslationLoading={isTranslationLoading}
+        navigation={navigation}
+        setIsTranslationLoading={setIsTranslationLoading}
+      />
     </View>
   );
 };
