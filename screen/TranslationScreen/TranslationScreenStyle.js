@@ -145,4 +145,41 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalCloseButton: {
+    marginTop: 20,
+    backgroundColor: "#5337FF",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  modalCloseButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  wordsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  word: {
+    fontSize: 16,
+    margin: 5,
+  },
 });

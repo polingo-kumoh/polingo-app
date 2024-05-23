@@ -4,7 +4,6 @@ import axios from "axios";
 const getWordDetailData = async (token, default_language, word) => {
   const code = default_language === "ENGLISH" ? "en" : "ja";
   const url = `${process.env.EXPO_PUBLIC_API_URL}/api/word/${code}?word=${word}`;
-
   try {
     const response = await axios.get(url, {
       headers: {
