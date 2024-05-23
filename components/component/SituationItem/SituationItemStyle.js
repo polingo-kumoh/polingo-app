@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     height: 50,
   },
   itemLabel: {
-    marginTop: 5,
+    marginTop: -5,
     textAlign: "center",
     fontSize: 12,
     fontWeight: "600",
