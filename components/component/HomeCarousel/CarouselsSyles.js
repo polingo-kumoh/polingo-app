@@ -24,7 +24,6 @@ export const styles = StyleSheet.create({
   },
   overlayView: {
     position: "absolute",
-
     backgroundColor: "rgba(0, 0, 0, 0.5)", // 검은색 반투명 오버레이
     borderRadius: 10,
     width: theme.screenWidth - 40,
@@ -65,5 +64,18 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 4,
     color: "#fff",
+  },
+  indicatorContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    bottom: 10, // 이미지 하단에 위치
+    left: 0,
+    right: 0,
+  },
+  indicator: {
+    fontSize: 20,
+    margin: 3,
   },
 });

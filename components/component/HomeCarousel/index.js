@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { View, Image } from "react-native";
+import React, { useRef, useState } from "react";
+import { View, Image, Text } from "react-native";
 import Carousel from "react-native-snap-carousel";
 import theme from "./../../../config/theme";
 import { styles } from "./CarouselsSyles";
@@ -7,6 +7,7 @@ import AppText from "../../common/AppText";
 
 const HomeCarousel = (props) => {
   const { items } = props;
+  const [activeIndex, setActiveIndex] = useState(0);
   const carouselRef = useRef(null);
 
   const renderItem = ({ item }) => (
@@ -35,14 +36,32 @@ const HomeCarousel = (props) => {
   );
 
   return (
-    <Carousel
-      layout={"default"}
-      ref={carouselRef}
-      data={items}
-      sliderWidth={theme.screenWidth - 40}
-      itemWidth={300}
-      renderItem={renderItem}
-    />
+    <View>
+      <Carousel
+        layout={"default"}
+        ref={carouselRef}
+        data={items}
+        sliderWidth={theme.screenWidth - 40}
+        itemWidth={300}
+        renderItem={renderItem}
+        loop={true}
+        loopClonesPerSide={items.length} // 아이템 길이만큼 복제
+        onSnapToItem={(index) => setActiveIndex(index % items.length)} // 현재 활성 슬라이드 인덱스 설정
+      />
+      <View style={styles.indicatorContainer}>
+        {items.map((item, index) => (
+          <Text
+            key={index}
+            style={[
+              styles.indicator,
+              { color: index === activeIndex ? "white" : "lightgray" },
+            ]}
+          >
+            {index === activeIndex ? "●" : "○"}
+          </Text>
+        ))}
+      </View>
+    </View>
   );
 };
 
