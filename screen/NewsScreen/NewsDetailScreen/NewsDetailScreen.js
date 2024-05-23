@@ -42,6 +42,8 @@ const NewsDetailScreen = ({ route }) => {
   const [translation, setTranslation] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [scrap, setScrap] = useState(false);
+  const [isTranslationLoading, setIsTranslationLoading] = useState(false);
+  const [isScrapLoading, setIsScrapLoading] = useState(false); // 스크랩 로딩 상태 추가
 
   const CustomHeaderTitle = ({ title }) => {
     return (
@@ -57,8 +59,7 @@ const NewsDetailScreen = ({ route }) => {
 
   useEffect(() => {
     if (wordDetailData) {
-      setIsModalVisible(true);
-      setActiveWordIndex(null);
+      setIsTranslationLoading(false);
     }
   }, [wordDetailData]);
 
@@ -66,16 +67,20 @@ const NewsDetailScreen = ({ route }) => {
     navigation.setOptions({
       headerTitle: () => <CustomHeaderTitle title={data?.title} />,
       headerRight: () => (
-        <TouchableOpacity onPress={handleBookmark}>
-          <Ionicons
-            name={scrap ? "bookmark" : "bookmark-outline"}
-            size={24}
-            color="black"
-          />
+        <TouchableOpacity onPress={handleBookmark} disabled={isScrapLoading}>
+          {isScrapLoading ? (
+            <ActivityIndicator size="small" color="#0000ff" />
+          ) : (
+            <Ionicons
+              name={scrap ? "bookmark" : "bookmark-outline"}
+              size={24}
+              color="black"
+            />
+          )}
         </TouchableOpacity>
       ),
     });
-  }, [navigation, data, scrap]);
+  }, [navigation, data, scrap, isScrapLoading]);
 
   useEffect(() => {
     if (data) {
@@ -103,6 +108,7 @@ const NewsDetailScreen = ({ route }) => {
   }
 
   const handleBookmark = () => {
+    setIsScrapLoading(true); // 로딩 시작
     if (scrap) {
       newsUnscrap.mutate(
         { token, id: idx },
@@ -110,6 +116,7 @@ const NewsDetailScreen = ({ route }) => {
           onSuccess: () => {
             setScrap(false);
             Alert.alert("언스크랩 성공", data?.title);
+            setIsScrapLoading(false); // 로딩 끝
           },
           onError: (error) => {
             console.error("Error unscraping the news", error);
@@ -117,6 +124,7 @@ const NewsDetailScreen = ({ route }) => {
               "Unscrap Failed",
               error.message || "Failed to unscrap the news"
             );
+            setIsScrapLoading(false); // 로딩 끝
           },
         }
       );
@@ -127,6 +135,7 @@ const NewsDetailScreen = ({ route }) => {
           onSuccess: () => {
             setScrap(true);
             Alert.alert("스크랩 성공", data?.title);
+            setIsScrapLoading(false); // 로딩 끝
           },
           onError: (error) => {
             console.error("Error scraping the news", error);
@@ -134,6 +143,7 @@ const NewsDetailScreen = ({ route }) => {
               "Scrap Failed",
               error.message || "Failed to scrap the news"
             );
+            setIsScrapLoading(false); // 로딩 끝
           },
         }
       );
@@ -162,6 +172,9 @@ const NewsDetailScreen = ({ route }) => {
   };
 
   const handleLongPress = async (word) => {
+    setIsModalVisible(true); // 모달창을 바로 보여줌
+    setIsTranslationLoading(true); // 로딩스피너 활성화
+
     const cleanedWord = word.replace(
       /[^\w\s\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFF]/gi,
       ""
@@ -177,10 +190,12 @@ const NewsDetailScreen = ({ route }) => {
         onSuccess: async (data) => {
           setWordToFetch(data.original_text);
           setTranslation(data.translated_text);
+          setIsTranslationLoading(false); // 로딩스피너 비활성화
         },
         onError: (err) => {
           Alert.alert("Translation Error", err.message);
           setActiveWordIndex(null);
+          setIsTranslationLoading(false); // 로딩스피너 비활성화
         },
       }
     );
@@ -210,7 +225,7 @@ const NewsDetailScreen = ({ route }) => {
   };
 
   const renderModalContent = () => {
-    if (isWordDetailLoading) {
+    if (isTranslationLoading) {
       return <ActivityIndicator size="large" color="#0000ff" />;
     }
     if (wordDetailData) {
