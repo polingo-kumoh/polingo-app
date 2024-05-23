@@ -26,7 +26,7 @@ import { useWordDetailData } from "../../../hooks/useWordDetailData";
 
 const NewsDetailScreen = ({ route }) => {
   const { token } = useAuth();
-  const { idx } = route.params;
+  const { idx, publishData } = route.params;
   const navigation = useNavigation();
   const newsScrap = useNewsScrap();
   const newsUnscrap = useNewsUnscrap();
@@ -252,17 +252,19 @@ const NewsDetailScreen = ({ route }) => {
     }
     return null;
   };
-
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Image source={{ uri: data?.image_url }} style={styles.newImage} />
+        <View style={styles.imgBottomSection}>
+          <AppText style={styles.publishText}>{publishData}</AppText>
+          <TouchableOpacity style={styles.linkView}>
+            <AppText style={styles.linkText} onPress={handlePress}>
+              원문 링크로 이동
+            </AppText>
+          </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity style={styles.linkView}>
-          <AppText style={styles.linkText} onPress={handlePress}>
-            원문 링크로 이동
-          </AppText>
-        </TouchableOpacity>
         <AppText style={styles.articleTitle}>{data?.title}</AppText>
         {data.sentences?.map((item) => (
           <View key={item.sentence_id}>

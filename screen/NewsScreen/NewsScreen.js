@@ -109,7 +109,10 @@ const NewsScreen = ({ navigation }) => {
             <TouchableOpacity
               style={styles.newsContents}
               onPress={() =>
-                navigation.navigate("NewsDetailScreen", { idx: item.id })
+                navigation.navigate("NewsDetailScreen", {
+                  idx: item.id,
+                  publishData: item.publish_date.split("T")[0],
+                })
               }
             >
               <Image
@@ -132,7 +135,9 @@ const NewsScreen = ({ navigation }) => {
                   {item.first_sentence}
                 </AppText>
               </View>
-              <AppText style={styles.publishDate}>{item.publish_date}</AppText>
+              <AppText style={styles.publishDate}>
+                {item.publish_date.split("T")[0]}
+              </AppText>
             </TouchableOpacity>
           )}
           ListEmptyComponent={() => (
@@ -156,7 +161,10 @@ const NewsScreen = ({ navigation }) => {
             <TouchableOpacity
               style={styles.newsContents}
               onPress={() =>
-                navigation.navigate("NewsDetailScreen", { idx: item.id })
+                navigation.navigate("NewsDetailScreen", {
+                  idx: item.id,
+                  publishData: item.publish_date.split("T")[0],
+                })
               }
             >
               <Image
@@ -179,7 +187,9 @@ const NewsScreen = ({ navigation }) => {
                   {item.first_sentence}
                 </AppText>
               </View>
-              <AppText style={styles.publishDate}>{item.publish_date}</AppText>
+              <AppText style={styles.publishDate}>
+                {item.publish_date.split("T")[0]}
+              </AppText>
             </TouchableOpacity>
           )}
           ListEmptyComponent={() => (

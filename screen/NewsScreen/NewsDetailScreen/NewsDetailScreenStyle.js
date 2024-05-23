@@ -109,4 +109,13 @@ export const styles = StyleSheet.create({
     alignItems: "flex-end",
     marginBottom: 10,
   },
+  imgBottomSection: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  publishText: {
+    fontWeight: "600",
+  },
 });
