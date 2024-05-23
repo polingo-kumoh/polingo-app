@@ -1,7 +1,13 @@
 // Inside SituationalExDetailScreen.js
 
-import React, { useEffect, useState } from "react";
-import { ScrollView, View, FlatList, TouchableOpacity } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  ScrollView,
+  View,
+  FlatList,
+  TouchableOpacity,
+  Animated,
+} from "react-native";
 import AppText from "../../../components/common/AppText";
 import { styles } from "./SituationalExDetailScreenStyle";
 import SituationDetailItem from "../../../components/component/SituationDetailItem/SituationDetailItem";
@@ -20,6 +26,8 @@ const SituationalExDetailScreen = ({ navigation, route }) => {
   } = usePlaceEx(token, userData?.default_language);
 
   const [selectedLabel, setSelectedLabel] = useState(null);
+  const scrollViewRef = useRef(null);
+  const itemOffsets = useRef([]);
 
   useEffect(() => {
     if (placeData) {
@@ -39,8 +47,28 @@ const SituationalExDetailScreen = ({ navigation, route }) => {
     });
   }, [label]);
 
-  const handleLabelPress = (label) => {
+  const handleLabelPress = (label, index) => {
     setSelectedLabel(label);
+    scrollViewRef.current?.scrollTo({
+      y: itemOffsets.current[index],
+      animated: true,
+    });
+  };
+
+  const handleScroll = (event) => {
+    const scrollPosition = event.nativeEvent.contentOffset.y;
+    let closestIndex = 0;
+
+    itemOffsets.current.forEach((offset, index) => {
+      if (scrollPosition >= offset) {
+        closestIndex = index;
+      }
+    });
+
+    const newLabel = currentPlace.detail_situations[closestIndex]?.name;
+    if (newLabel !== selectedLabel) {
+      setSelectedLabel(newLabel);
+    }
   };
 
   if (isError) {
@@ -61,7 +89,10 @@ const SituationalExDetailScreen = ({ navigation, route }) => {
 
   const currentPlace = placeData.find((item) => item.name === label);
   const labels = currentPlace
-    ? currentPlace.detail_situations.map((situation) => situation.name)
+    ? currentPlace.detail_situations.map((situation, index) => ({
+        name: situation.name,
+        index: index,
+      }))
     : [];
 
   return (
@@ -70,35 +101,47 @@ const SituationalExDetailScreen = ({ navigation, route }) => {
         data={labels}
         horizontal
         showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.labelItem}
-            onPress={() => handleLabelPress(item)}
+            onPress={() => handleLabelPress(item.name, item.index)}
           >
             <View style={styles.labelContainer}>
               <AppText
                 style={[
                   styles.labelText,
-                  item === selectedLabel && styles.selectedLabelText,
+                  item.name === selectedLabel && styles.selectedLabelText,
                 ]}
               >
-                {item}
+                {item.name}
               </AppText>
-              {item === selectedLabel && <View style={styles.underline} />}
+              {item.name === selectedLabel && <View style={styles.underline} />}
             </View>
           </TouchableOpacity>
         )}
         contentContainerStyle={styles.labelList}
       />
 
-      <ScrollView style={styles.content}>
+      <ScrollView
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        style={styles.content}
+      >
         {currentPlace?.detail_situations.map((situation, index) => (
-          <SituationDetailItem
+          <View
+            onLayout={(event) => {
+              const layout = event.nativeEvent.layout;
+              itemOffsets.current[index] = layout.y;
+            }}
             key={index}
-            label={situation.name}
-            sentences={situation.sentences}
-          />
+          >
+            <SituationDetailItem
+              label={situation.name}
+              sentences={situation.sentences}
+            />
+          </View>
         ))}
       </ScrollView>
     </View>
