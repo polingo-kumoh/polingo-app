@@ -4,6 +4,7 @@ import theme from "../../config/theme";
 export const styles = StyleSheet.create({
   subTitle: {
     fontWeight: "600",
+    color: "#2ecc71",
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -20,7 +21,7 @@ export const styles = StyleSheet.create({
   },
   selectedCategory: {
     fontWeight: "600",
-    color: "#aaa",
+    color: "#00B0F0",
   },
   category: {
     flexDirection: "row",

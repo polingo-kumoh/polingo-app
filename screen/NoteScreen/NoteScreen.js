@@ -212,20 +212,16 @@ const NoteScreen = ({ navigation }) => {
         ListHeaderComponent={
           <>
             <View style={styles.subContainer}>
-              <AppText style={styles.subTitle}>공부할 단어장 👀</AppText>
               <TouchableOpacity
                 style={styles.category}
                 onPress={() => navigation.navigate("CategoryEditScreen")}
               >
-                <AppText style={styles.selectedCategory}>
-                  {defaultCategoryName}
-                </AppText>
-                <MaterialIcons
-                  name="keyboard-arrow-right"
-                  size={24}
-                  color="#aaa"
-                />
+                <AppText style={styles.subTitle}>단어장 변경/편집하기</AppText>
               </TouchableOpacity>
+
+              <AppText style={styles.selectedCategory}>
+                현재 단어장 : {defaultCategoryName}
+              </AppText>
             </View>
             {editMode && (
               <View style={styles.checkboxContainer}>

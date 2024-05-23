@@ -76,7 +76,7 @@ const MainNavigator = () => {
       <Stack.Screen
         name="CategoryEditScreen"
         component={CategoryEditScreen}
-        options={{ headerTitle: "카테고리 편집" }}
+        options={{ headerTitle: "단어장 변경 및 편집" }}
       />
       <Stack.Screen
         name="WordEditScreen"
@@ -86,7 +86,7 @@ const MainNavigator = () => {
       <Stack.Screen
         name="CategoryAddScreen"
         component={CategoryAddScreen}
-        options={{ headerTitle: "카테고리 추가" }}
+        options={{ headerTitle: "단어장 추가" }}
       />
       <Stack.Screen
         name="WordAddScreen"
