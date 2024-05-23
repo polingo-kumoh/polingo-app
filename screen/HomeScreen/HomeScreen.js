@@ -10,7 +10,7 @@ import { useUserData } from "../../hooks/useUserData";
 import { useWeatherEx } from "../../hooks/useWeatherEx";
 import { useDateEx } from "../../hooks/useDateEx";
 import { useTimeEx } from "../../hooks/useTimeEx";
-import { useWeekExData } from "../../hooks/useWeekExData";
+import { useWeekEx } from "../../hooks/useWeekEx";
 import * as Location from "expo-location";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -44,15 +44,15 @@ const HomeScreen = () => {
   } = useDateEx(token, userData?.default_language, "2024-01-01");
 
   const {
-    data: timeData,
-    isError: isTimeError,
-    error: timeError,
-  } = useTimeEx(token, userData?.default_language);
-
-  const {
     data: weekData,
     isError: isWeekError,
     error: weekError,
+  } = useWeekEx(token, userData?.default_language);
+
+  const {
+    data: timeData,
+    isError: isTimeError,
+    error: timeError,
   } = useTimeEx(token, userData?.default_language);
 
   useEffect(() => {
@@ -103,7 +103,6 @@ const HomeScreen = () => {
     const now = new Date();
     return now.toTimeString().split(" ")[0]; // 현재 시간을 HH:MM:SS 형식으로 반환
   };
-
   const getCurrentDayOfWeek = () => {
     const now = new Date();
     const daysOfWeek = [

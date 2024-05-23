@@ -5,22 +5,29 @@ import { ScrollView, View, FlatList, TouchableOpacity } from "react-native";
 import AppText from "../../../components/common/AppText";
 import { styles } from "./SituationalExDetailScreenStyle";
 import SituationDetailItem from "../../../components/component/SituationDetailItem/SituationDetailItem";
-
-const labels = [
-  "주문",
-  "메뉴",
-  "음료",
-  "음식",
-  "예시1",
-  "예시2",
-  "예시3",
-  "예시4",
-  // 더 많은 라벨 추가 가능
-];
+import { useAuth } from "../../../config/AuthContext";
+import { useUserData } from "../../../hooks/useUserData";
+import { usePlaceEx } from "../../../hooks/usePlaceEx";
 
 const SituationalExDetailScreen = ({ navigation, route }) => {
   const { label } = route.params;
-  const [selectedLabel, setSelectedLabel] = useState(labels[0]);
+  const { token } = useAuth();
+  const { data: userData } = useUserData(token);
+  const {
+    data: placeData,
+    isError,
+    error,
+  } = usePlaceEx(token, userData?.default_language);
+
+  const [selectedLabel, setSelectedLabel] = useState(null);
+
+  useEffect(() => {
+    if (placeData) {
+      const defaultLabel = placeData.find((item) => item.name === label)
+        ?.detail_situations[0]?.name;
+      setSelectedLabel(defaultLabel || "");
+    }
+  }, [placeData]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -30,12 +37,32 @@ const SituationalExDetailScreen = ({ navigation, route }) => {
         </View>
       ),
     });
-  }, []);
+  }, [label]);
 
   const handleLabelPress = (label) => {
     setSelectedLabel(label);
-    // 여기서 SituationDetailItem로 분기할 수 있음
   };
+
+  if (isError) {
+    return (
+      <View style={styles.container}>
+        <AppText style={styles.errorText}>Error: {error.message}</AppText>
+      </View>
+    );
+  }
+
+  if (!placeData) {
+    return (
+      <View style={styles.container}>
+        <AppText style={styles.loadingText}>Loading...</AppText>
+      </View>
+    );
+  }
+
+  const currentPlace = placeData.find((item) => item.name === label);
+  const labels = currentPlace
+    ? currentPlace.detail_situations.map((situation) => situation.name)
+    : [];
 
   return (
     <View style={styles.container}>
@@ -66,10 +93,13 @@ const SituationalExDetailScreen = ({ navigation, route }) => {
       />
 
       <ScrollView style={styles.content}>
-        <SituationDetailItem label={selectedLabel} />
-        <SituationDetailItem label={selectedLabel} />
-        <SituationDetailItem label={selectedLabel} />
-        <SituationDetailItem label={selectedLabel} />
+        {currentPlace?.detail_situations.map((situation, index) => (
+          <SituationDetailItem
+            key={index}
+            label={situation.name}
+            sentences={situation.sentences}
+          />
+        ))}
       </ScrollView>
     </View>
   );
