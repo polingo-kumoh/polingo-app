@@ -28,7 +28,6 @@ export default function OAuthLoginScreen({ route, navigation }) {
       //navigation.navigate("LoginScreen");
     }
   };
-
   return (
     <View style={Styles.container}>
       <WebView

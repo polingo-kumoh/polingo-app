@@ -23,7 +23,6 @@ const formatItems = (data, numColumns) => {
 
   return data;
 };
-
 const SituationalExScreen = ({ navigation }) => {
   const { token } = useAuth();
   const { data: userData } = useUserData(token);

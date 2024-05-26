@@ -22,7 +22,6 @@ const ProfileScreen = () => {
   const [nickname, setNickname] = useState("");
 
   const navigation = useNavigation();
-
   const handleEdit = () => {
     setNickname(userData.nickname);
     setIsEditing(true);

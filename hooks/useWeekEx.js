@@ -6,7 +6,6 @@ const getWeekExData = async (token, default_language) => {
     const params = new URLSearchParams({
       lang: default_language,
     });
-
     const response = await axios.get(
       `${
         process.env.EXPO_PUBLIC_API_URL
