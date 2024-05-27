@@ -43,6 +43,7 @@ const HomeScreen = () => {
     isError: isDateError,
     error: dateError,
   } = useDateEx(token, userData?.default_language, "2024-01-01");
+
   const {
     data: weekData,
     isError: isWeekError,
