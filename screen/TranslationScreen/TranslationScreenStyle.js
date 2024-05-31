@@ -34,9 +34,7 @@ export const styles = StyleSheet.create({
     position: "relative",
   },
   arrowIconView: {
-    position: "absolute",
-    right: 20,
-    top: 30,
+    marginLeft: 10,
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -143,16 +141,19 @@ export const styles = StyleSheet.create({
     elevation: 5,
     position: "relative",
     bottom: 10,
+    height: theme.screenHeight - 220,
   },
   transViewHeader: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 10,
   },
   transViewBorder: {
     flex: 1,
-    borderTopColor: "#CAC1FF",
-    borderTopWidth: 3,
-    flexDirection: "row",
+    backgroundColor: "#CAC1FF",
+    height: 3,
+    width: (theme.screenWidth / 3) * 2,
   },
   translationText: {
     fontSize: 30,

@@ -354,6 +354,7 @@ const TranslationScreen = ({ navigation }) => {
                   />
                 </TouchableOpacity>
               </View>
+
               <AppText style={styles.translationText}>
                 {translationResult}
               </AppText>
