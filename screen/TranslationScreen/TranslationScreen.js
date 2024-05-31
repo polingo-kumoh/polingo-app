@@ -251,7 +251,7 @@ const TranslationScreen = ({ navigation }) => {
     return {
       ...styles.transView,
       bottom: bottom,
-      height: theme.screenHeight - 220,
+      height: theme.screenHeight - 220 - inputHeight + 50,
     };
   };
 
