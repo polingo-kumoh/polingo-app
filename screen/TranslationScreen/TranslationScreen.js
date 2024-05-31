@@ -8,6 +8,9 @@ import {
   ActivityIndicator,
   Text,
   Modal,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import AppText from "../../components/common/AppText";
 import { styles } from "./TranslationScreenStyle";
@@ -51,6 +54,7 @@ const TranslationScreen = ({ navigation }) => {
   const [isTranslationLoading, setIsTranslationLoading] = useState(false);
   const [isWordModalVisible, setIsWordModalVisible] = useState(false);
   const { data: userData } = useUserData(token);
+  const [inputHeight, setInputHeight] = useState(0);
 
   const { data: wordDetailData, refetch: refetchWordDetailData } =
     useWordDetailData(token, userData?.default_language, wordToFetch);
@@ -223,12 +227,32 @@ const TranslationScreen = ({ navigation }) => {
 
   const getInputStyle = () => {
     const baseHeight = theme.screenHeight - 300;
-    const longHeight = theme.screenHeight - 150;
+    const dynamicHeight =
+      transBtn && baseHeight <= inputHeight + 30
+        ? inputHeight + 30
+        : baseHeight;
     const baseStyle = {
       ...styles.input,
-      height: transBtn ? longHeight : baseHeight,
+      height: dynamicHeight,
     };
+    if (transBtn) {
+      baseStyle.borderBottomLeftRadius = 0;
+      baseStyle.borderBottomRightRadius = 0;
+      baseStyle.shadowOffset = { width: 0, height: 0 };
+      baseStyle.elevation = 0;
+      baseStyle.height = inputHeight + 30;
+    }
     return baseStyle;
+  };
+
+  const getTransViewStyle = () => {
+    const baseHeight = theme.screenHeight - 300;
+    const bottom = transBtn && baseHeight <= inputHeight + 30 ? inputHeight : 0;
+    return {
+      ...styles.transView,
+      bottom: bottom,
+      height: theme.screenHeight - 220,
+    };
   };
 
   const pickImage = () =>
@@ -274,7 +298,10 @@ const TranslationScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       {isLoading && (
         <ActivityIndicator
           size="large"
@@ -282,100 +309,124 @@ const TranslationScreen = ({ navigation }) => {
           style={styles.loadingIndicator}
         />
       )}
-      <View style={styles.inputWrapper}>
-        <TextInput
-          style={getInputStyle()}
-          onChangeText={(text) => {
-            setInputText(text);
-            setOriginalText(text);
-          }}
-          value={originalText || inputText}
-          multiline
-          numberOfLines={4}
-          placeholder="텍스트 입력"
-        />
-        {inputText.length > 0 && (
-          <TouchableOpacity style={styles.arrowIconView} onPress={transText}>
-            <AntDesign
-              name="arrowright"
-              style={styles.arrowIcon}
-              size={24}
-              color="white"
-            />
-          </TouchableOpacity>
-        )}
-      </View>
-      {transBtn ? (
-        <>
-          <View style={styles.translatedLanguage}>
-            <AppText style={styles.language}>
-              {isLoading ? "Loading" : userData.default_language}
-            </AppText>
-            <AntDesign name="arrowright" size={24} color="black" />
-            <AppText style={styles.language}>한국어</AppText>
-          </View>
-          <View style={styles.transView}>
-            <AppText style={styles.translationText}>
-              {translationResult}
-            </AppText>
-          </View>
-          <View style={styles.translationActions}>
-            <TouchableOpacity
-              style={styles.saveWordBtn}
-              onPress={() => setSaveModalVisible(true)}
-            >
-              <FontAwesome name="save" size={16} color="black" />
-              <AppText style={styles.saveWordText}>단어 저장</AppText>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={getInputStyle()}
+            onChangeText={(text) => {
+              setInputText(text);
+              setOriginalText(text);
+            }}
+            value={originalText}
+            multiline={true}
+            placeholder="텍스트 입력"
+            placeholderTextColor="#ccc"
+            onContentSizeChange={(event) =>
+              setInputHeight(event.nativeEvent.contentSize.height)
+            }
+          />
+          {inputText.length > 0 && !transBtn && (
+            <TouchableOpacity style={styles.arrowIconView} onPress={transText}>
+              <AntDesign
+                name="arrowright"
+                style={styles.arrowIcon}
+                size={24}
+                color="white"
+              />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.newTranslationBtn}
-              onPress={resetTranslation}
-            >
-              <AntDesign name="plus" size={16} color="black" />
-              <AppText style={styles.newTranslationText}>새 번역</AppText>
-            </TouchableOpacity>
-          </View>
-        </>
-      ) : (
-        <View style={styles.bottom}>
-          <View style={styles.translatedLanguage}>
-            <AppText style={styles.language}>
-              {isLoading ? "Loading" : userData.default_language}
-            </AppText>
-            <AntDesign name="arrowright" size={24} color="black" />
-            <AppText style={styles.language}>한국어</AppText>
-          </View>
-          <View style={styles.transBtn}>
-            <View style={styles.side}>
-              <TouchableOpacity style={styles.sideBtn} onPress={pickImage}>
-                <FontAwesome name="photo" size={24} color="black" />
-              </TouchableOpacity>
-              <AppText style={styles.sideText}>사진 불러오기</AppText>
-            </View>
-            {isRecording ? (
-              <TouchableOpacity
-                style={styles.centerBtn}
-                onPress={stopAndUploadAudio}
-              >
-                <FontAwesome name="stop-circle" size={24} color="red" />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={styles.centerBtn}
-                onPress={startRecording}
-              >
-                <FontAwesome name="microphone" size={24} color="white" />
-              </TouchableOpacity>
-            )}
-            <View style={styles.side}>
-              <TouchableOpacity style={styles.sideBtn} onPress={takePhoto}>
-                <AntDesign name="camera" size={24} color="black" />
-              </TouchableOpacity>
-              <AppText style={styles.sideText}>사진 찍기</AppText>
-            </View>
-          </View>
+          )}
         </View>
-      )}
+
+        {transBtn && (
+          <>
+            <View style={getTransViewStyle()}>
+              <View style={styles.transViewHeader}>
+                <View style={styles.transViewBorder} />
+                <TouchableOpacity
+                  style={styles.arrowIconView}
+                  onPress={transText}
+                >
+                  <AntDesign
+                    name="arrowright"
+                    style={styles.arrowIcon}
+                    size={24}
+                    color="white"
+                  />
+                </TouchableOpacity>
+              </View>
+              <AppText style={styles.translationText}>
+                {translationResult}
+              </AppText>
+            </View>
+
+            <View style={styles.translatedLanguage}>
+              <AppText style={styles.language}>
+                {isLoading ? "Loading" : userData.default_language}
+              </AppText>
+              <AntDesign name="arrowright" size={24} color="black" />
+              <AppText style={styles.language}>한국어</AppText>
+            </View>
+
+            <View style={styles.translationActions}>
+              <TouchableOpacity
+                style={styles.saveWordBtn}
+                onPress={() => setSaveModalVisible(true)}
+              >
+                <FontAwesome name="save" size={16} color="black" />
+                <AppText style={styles.saveWordText}>단어 저장</AppText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.newTranslationBtn}
+                onPress={resetTranslation}
+              >
+                <AntDesign name="plus" size={16} color="black" />
+                <AppText style={styles.newTranslationText}>새 번역</AppText>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
+
+        {!transBtn && (
+          <View style={styles.bottom}>
+            <View style={styles.translatedLanguage}>
+              <AppText style={styles.language}>
+                {isLoading ? "Loading" : userData.default_language}
+              </AppText>
+              <AntDesign name="arrowright" size={24} color="black" />
+              <AppText style={styles.language}>한국어</AppText>
+            </View>
+            <View style={styles.transBtn}>
+              <View style={styles.side}>
+                <TouchableOpacity style={styles.sideBtn} onPress={pickImage}>
+                  <FontAwesome name="photo" size={24} color="black" />
+                </TouchableOpacity>
+                <AppText style={styles.sideText}>사진 불러오기</AppText>
+              </View>
+              {isRecording ? (
+                <TouchableOpacity
+                  style={styles.centerBtn}
+                  onPress={stopAndUploadAudio}
+                >
+                  <FontAwesome name="stop-circle" size={24} color="red" />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.centerBtn}
+                  onPress={startRecording}
+                >
+                  <FontAwesome name="microphone" size={24} color="white" />
+                </TouchableOpacity>
+              )}
+              <View style={styles.side}>
+                <TouchableOpacity style={styles.sideBtn} onPress={takePhoto}>
+                  <AntDesign name="camera" size={24} color="black" />
+                </TouchableOpacity>
+                <AppText style={styles.sideText}>사진 찍기</AppText>
+              </View>
+            </View>
+          </View>
+        )}
+      </ScrollView>
       <ConfirmPhotoModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -415,7 +466,7 @@ const TranslationScreen = ({ navigation }) => {
         navigation={navigation}
         setIsTranslationLoading={setIsTranslationLoading}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
