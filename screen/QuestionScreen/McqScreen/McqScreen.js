@@ -80,8 +80,8 @@ const McqScreen = ({ navigation, route }) => {
 
   const handleTimeUp = () => {
     // 오답으로 처리
-    const currentQuestion = quizData.quizes[currentQuestionIndex];
-    const incorrectOption = currentQuestion.options.find(
+    const currentQuestion = quizData?.quizes[currentQuestionIndex];
+    const incorrectOption = currentQuestion?.options?.find(
       (option) => option.option_id !== currentQuestion.correct_id
     );
 
@@ -121,7 +121,7 @@ const McqScreen = ({ navigation, route }) => {
 
     // answers 배열을 먼저 업데이트
     const newAnswer = {
-      quiz_id: quizData.quizes[currentQuestionIndex].id,
+      quiz_id: quizData?.quizes[currentQuestionIndex]?.id,
       selected_option_id: optionId,
     };
     const updatedAnswers = answers.some(
@@ -182,7 +182,7 @@ const McqScreen = ({ navigation, route }) => {
           isSelected={selectedOption === option.option_id}
           isCorrect={
             option.option_id ===
-            quizData.quizes[currentQuestionIndex].correct_id
+            quizData?.quizes[currentQuestionIndex]?.correct_id
           }
           showAnswer={showAnswer}
         />
