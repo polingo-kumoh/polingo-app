@@ -31,7 +31,6 @@ export const styles = StyleSheet.create({
   },
   overlayTitle: {
     alignSelf: "center",
-    marginBottom: 15,
   },
   regionText: {
     fontSize: 24,

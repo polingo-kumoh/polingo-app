@@ -4,6 +4,8 @@ import Carousel from "react-native-snap-carousel";
 import theme from "./../../../config/theme";
 import { styles } from "./CarouselsSyles";
 import AppText from "../../common/AppText";
+import DynamicText from "../DynamicText/DynamicText";
+import DynamicTextOneLine from "./../DynamicTextOneLine/DynamicTextOneLine";
 
 const HomeCarousel = (props) => {
   const { items } = props;
@@ -19,18 +21,18 @@ const HomeCarousel = (props) => {
           <AppText style={styles.regionText}>{item.region}</AppText>
           <AppText style={styles.temperatureText}>{item.temperature}</AppText>
         </View>
-        <AppText style={styles.exampleSentence}>
+        <DynamicText style={styles.exampleSentence}>
           {item.example_sentence1}
-        </AppText>
-        <AppText style={styles.exampleSentenceTranslation}>
+        </DynamicText>
+        <DynamicTextOneLine style={styles.exampleSentenceTranslation}>
           {item.example_sentence1_translate}
-        </AppText>
-        <AppText style={styles.exampleSentence}>
+        </DynamicTextOneLine>
+        <DynamicText style={styles.exampleSentence}>
           {item.example_sentence2}
-        </AppText>
-        <AppText style={styles.exampleSentenceTranslation}>
+        </DynamicText>
+        <DynamicTextOneLine style={styles.exampleSentenceTranslation}>
           {item.example_sentence2_translate}
-        </AppText>
+        </DynamicTextOneLine>
       </View>
     </View>
   );
@@ -45,8 +47,8 @@ const HomeCarousel = (props) => {
         itemWidth={300}
         renderItem={renderItem}
         loop={true}
-        loopClonesPerSide={items.length} // 아이템 길이만큼 복제
-        onSnapToItem={(index) => setActiveIndex(index % items.length)} // 현재 활성 슬라이드 인덱스 설정
+        loopClonesPerSide={items.length}
+        onSnapToItem={(index) => setActiveIndex(index % items.length)}
       />
       <View style={styles.indicatorContainer}>
         {items.map((item, index) => (
