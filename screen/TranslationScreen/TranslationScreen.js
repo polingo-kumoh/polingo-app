@@ -246,13 +246,28 @@ const TranslationScreen = ({ navigation }) => {
   };
 
   const getTransViewStyle = () => {
-    const baseHeight = theme.screenHeight - 300;
+    const baseHeight = theme.screenHeight - 220;
+
     const bottom = transBtn && baseHeight <= inputHeight + 30 ? inputHeight : 0;
+    const height =
+      transBtn && baseHeight <= inputHeight + 30
+        ? inputHeight + 30
+        : baseHeight;
     return {
       ...styles.transView,
       bottom: bottom,
-      height: theme.screenHeight - 220 - inputHeight + 50,
+      height: height,
     };
+  };
+
+  const getArrowStyle = () => {
+    if (transBtn) {
+      return {
+        ...styles.arrowIconView,
+        marginLeft: 10,
+        position: undefined,
+      };
+    }
   };
 
   const pickImage = () =>
@@ -342,10 +357,7 @@ const TranslationScreen = ({ navigation }) => {
             <View style={getTransViewStyle()}>
               <View style={styles.transViewHeader}>
                 <View style={styles.transViewBorder} />
-                <TouchableOpacity
-                  style={styles.arrowIconView}
-                  onPress={transText}
-                >
+                <TouchableOpacity style={getArrowStyle()} onPress={transText}>
                   <AntDesign
                     name="arrowright"
                     style={styles.arrowIcon}

@@ -34,7 +34,9 @@ export const styles = StyleSheet.create({
     position: "relative",
   },
   arrowIconView: {
-    marginLeft: 10,
+    position: "absolute",
+    right: 20,
+    top: 30,
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -150,7 +152,6 @@ export const styles = StyleSheet.create({
     marginVertical: 10,
   },
   transViewBorder: {
-    flex: 1,
     backgroundColor: "#CAC1FF",
     height: 3,
     width: (theme.screenWidth / 3) * 2,
