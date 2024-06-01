@@ -42,7 +42,7 @@ const HomeScreen = () => {
     data: dateData,
     isError: isDateError,
     error: dateError,
-  } = useDateEx(token, userData?.default_language, "2024-01-01");
+  } = useDateEx(token, userData?.default_language, currentDate);
 
   const {
     data: weekData,
@@ -86,7 +86,6 @@ const HomeScreen = () => {
 
     requestLocationPermission();
   }, []);
-
   const getRandomSituation = (situations) => {
     const randomIndex = Math.floor(Math.random() * situations.length);
     return situations[randomIndex];
@@ -117,39 +116,49 @@ const HomeScreen = () => {
     ];
     return daysOfWeek[now.getDay()]; // 현재 요일을 반환
   };
-  const carouselImages =
-    weatherData && dateData && randomTimeSituation && randomWeekSituation
-      ? [
-          {
-            source: { uri: weatherData?.situation_image },
-            region: weatherData?.city,
-            temperature: `${weatherData?.temp}º`,
-            example_sentence1: weatherData?.sentance,
-            example_sentence1_translate: weatherData?.translate,
-          },
-          {
-            source: { uri: dateData?.situation_image },
-            region: weatherData?.city,
-            temperature: currentDate,
-            example_sentence1: dateData?.sentance,
-            example_sentence1_translate: dateData?.translate,
-          },
-          {
-            source: { uri: randomTimeSituation?.image_url },
-            region: weatherData?.city,
-            temperature: getCurrentTime(), // 현재 시간을 표시
-            example_sentence1: randomTimeSituation?.sentence,
-            example_sentence1_translate: randomTimeSituation?.translate,
-          },
-          {
-            source: { uri: randomWeekSituation?.image_url },
-            region: weatherData?.city,
-            temperature: getCurrentDayOfWeek(), // 오늘의 요일을 표시
-            example_sentence1: randomWeekSituation?.sentence,
-            example_sentence1_translate: randomWeekSituation?.translate,
-          },
-        ]
-      : [];
+
+  // 초기화된 carouselImages 배열
+  let carouselImages = [];
+
+  if (weatherData && !isWeatherError) {
+    carouselImages.push({
+      source: { uri: weatherData?.situation_image },
+      region: weatherData?.city,
+      temperature: `${weatherData?.temp}º`,
+      example_sentence1: weatherData?.sentance,
+      example_sentence1_translate: weatherData?.translate,
+    });
+  }
+
+  if (dateData && !isDateError) {
+    carouselImages.push({
+      source: { uri: dateData?.situation_image },
+      region: weatherData?.city,
+      temperature: currentDate,
+      example_sentence1: dateData?.sentance,
+      example_sentence1_translate: dateData?.translate,
+    });
+  }
+
+  if (randomTimeSituation && !isTimeError) {
+    carouselImages.push({
+      source: { uri: randomTimeSituation?.image_url },
+      region: weatherData?.city,
+      temperature: getCurrentTime(), // 현재 시간을 표시
+      example_sentence1: randomTimeSituation?.sentence,
+      example_sentence1_translate: randomTimeSituation?.translate,
+    });
+  }
+
+  if (randomWeekSituation && !isWeekError) {
+    carouselImages.push({
+      source: { uri: randomWeekSituation?.image_url },
+      region: weatherData?.city,
+      temperature: getCurrentDayOfWeek(), // 오늘의 요일을 표시
+      example_sentence1: randomWeekSituation?.sentence,
+      example_sentence1_translate: randomWeekSituation?.translate,
+    });
+  }
 
   React.useLayoutEffect(() => {
     navigation.setOptions({

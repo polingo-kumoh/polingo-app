@@ -74,7 +74,7 @@ export const styles = StyleSheet.create({
     right: 0,
   },
   indicator: {
-    fontSize: 20,
+    fontSize: 10,
     margin: 3,
   },
 });
