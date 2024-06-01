@@ -12,7 +12,7 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import AppText from "../../components/common/AppText";
 import { styles } from "./NoteScreenStyle";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import NoteItem from "./../../components/component/NoteItem/NoteItem";
 import { Feather } from "@expo/vector-icons";
 import { Foundation } from "@expo/vector-icons";
@@ -48,6 +48,19 @@ const NoteScreen = ({ navigation }) => {
       setDefaultCategoryName(defaultItem.name);
     }
   }, [noteDataApi]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          style={styles.category}
+          onPress={() => navigation.navigate("CategoryEditScreen")}
+        >
+          <AntDesign name="setting" size={24} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -212,13 +225,6 @@ const NoteScreen = ({ navigation }) => {
         ListHeaderComponent={
           <>
             <View style={styles.subContainer}>
-              <TouchableOpacity
-                style={styles.category}
-                onPress={() => navigation.navigate("CategoryEditScreen")}
-              >
-                <AppText style={styles.subTitle}>단어장 변경/편집하기</AppText>
-              </TouchableOpacity>
-
               <AppText style={styles.selectedCategory}>
                 현재 단어장 : {defaultCategoryName}
               </AppText>
