@@ -1,5 +1,3 @@
-// Inside McqScreen.js
-
 import React, { useEffect, useState, useRef } from "react";
 import { View, ActivityIndicator } from "react-native";
 import AppText from "../../../components/common/AppText";
@@ -37,8 +35,13 @@ const McqScreen = ({ navigation, route }) => {
     setSelectedOption(null);
     setShowAnswer(false);
     setAnswers([]);
-    startTimer();
   }, [route.params]);
+
+  useEffect(() => {
+    if (quizData) {
+      startTimer();
+    }
+  }, [quizData, currentQuestionIndex]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -53,18 +56,18 @@ const McqScreen = ({ navigation, route }) => {
   }, [navigation, currentQuestionIndex, quizData]);
 
   useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
+
+  const startTimer = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
 
-    startTimer();
-
-    return () => {
-      clearInterval(timerRef.current);
-    };
-  }, [currentQuestionIndex]);
-
-  const startTimer = () => {
     setTimeLeft(10); // 질문당 10초로 초기화
 
     timerRef.current = setInterval(() => {
@@ -72,6 +75,7 @@ const McqScreen = ({ navigation, route }) => {
         if (prevTime <= 1) {
           clearInterval(timerRef.current);
           handleTimeUp();
+          return 0; // 0초로 설정하여 화면에 0초 표시
         }
         return prevTime - 1;
       });
@@ -79,26 +83,30 @@ const McqScreen = ({ navigation, route }) => {
   };
 
   const handleTimeUp = () => {
-    // 오답으로 처리
-    const currentQuestion = quizData?.quizes[currentQuestionIndex];
-    const incorrectOption = currentQuestion?.options?.find(
-      (option) => option.option_id !== currentQuestion.correct_id
-    );
+    if (quizData?.quizes && quizData.quizes[currentQuestionIndex]) {
+      // 오답으로 처리
+      const currentQuestion = quizData.quizes[currentQuestionIndex];
+      const incorrectOption = currentQuestion.options.find(
+        (option) => option.option_id !== currentQuestion.correct_id
+      );
 
-    const newAnswer = {
-      quiz_id: currentQuestion.id,
-      selected_option_id: incorrectOption.option_id, // correct_id가 아닌 id값 설정
-    };
-    const updatedAnswers = [...answers, newAnswer];
+      const newAnswer = {
+        quiz_id: currentQuestion.id,
+        selected_option_id: incorrectOption.option_id, // correct_id가 아닌 id값 설정
+      };
+      const updatedAnswers = [...answers, newAnswer];
 
-    setAnswers(updatedAnswers);
-    setShowAnswer(true); // 정답 표시
+      setAnswers(updatedAnswers);
+      setShowAnswer(true); // 정답 표시
 
-    // 일정 시간 후 다음 질문으로 이동
-    setTimeout(() => {
-      goToNextQuestion(updatedAnswers);
-      setShowAnswer(false); // 다음 질문으로 넘어가면서 결과 표시 리셋
-    }, 2000); // 2초 후 다음 질문으로 이동
+      // 일정 시간 후 다음 질문으로 이동
+      setTimeout(() => {
+        goToNextQuestion(updatedAnswers);
+        setShowAnswer(false); // 다음 질문으로 넘어가면서 결과 표시 리셋
+      }, 2000); // 2초 후 다음 질문으로 이동
+    } else {
+      console.log("No valid question found");
+    }
   };
 
   const goToNextQuestion = (updatedAnswers) => {
