@@ -197,7 +197,6 @@ const TranslationScreen = ({ navigation }) => {
     setOriginalText("");
     setTranslationResult("");
   };
-
   const handleImageConfirm = (image) => {
     setLoading(true);
     imageUpload.mutate(
@@ -215,10 +214,17 @@ const TranslationScreen = ({ navigation }) => {
           setLoading(false);
         },
         onError: (error) => {
-          Alert.alert(
-            "이미지 업로드 에러",
-            error.message || "Failed to upload image."
-          );
+          if (error.response && error.response.status === 413) {
+            Alert.alert(
+              "이미지 업로드 에러",
+              "이미지 용량이 너무 큽니다. 다른 이미지를 선택해주세요."
+            );
+          } else {
+            Alert.alert(
+              "이미지 업로드 에러",
+              error.message || "Failed to upload image."
+            );
+          }
           setLoading(false);
         },
       }
@@ -266,6 +272,8 @@ const TranslationScreen = ({ navigation }) => {
         ...styles.arrowIconView,
         marginLeft: 10,
         position: undefined,
+        right: undefined,
+        top: undefined,
       };
     }
   };
