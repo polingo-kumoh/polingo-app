@@ -211,7 +211,8 @@ export const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   word: {
-    fontSize: 16,
     margin: 5,
+    fontSize: 20,
+    backgroundColor: "yellow",
   },
 });

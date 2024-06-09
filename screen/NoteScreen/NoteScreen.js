@@ -195,7 +195,9 @@ const NoteScreen = ({ navigation }) => {
                 closeMenu();
               }}
             >
-              <AppText style={styles.menuText}>삭제</AppText>
+              <AppText style={{ ...styles.menuText, color: "red" }}>
+                삭제
+              </AppText>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.menuItem}
@@ -206,7 +208,9 @@ const NoteScreen = ({ navigation }) => {
                 handleNavigateToWordEditScreen();
               }}
             >
-              <AppText style={styles.menuText}>그룹 변경</AppText>
+              <AppText style={{ ...styles.menuText, color: "blue" }}>
+                그룹 변경
+              </AppText>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.menuItem}

@@ -27,14 +27,14 @@ const ChangeLanguageScreen = ({ route }) => {
     <View style={styles.container}>
       <View>
         <View style={styles.languageView}>
-          <AppText style={styles.languageText}>English (영어)</AppText>
+          <AppText style={styles.languageText}>ENGLISH (영어)</AppText>
           <Switch
             value={selectedLanguage === "ENGLISH"}
             onValueChange={() => handleLanguageChange("ENGLISH")}
           />
         </View>
         <View style={styles.languageView}>
-          <AppText style={styles.languageText}>日本語 (일본어)</AppText>
+          <AppText style={styles.languageText}>JAPANESE (일본어)</AppText>
           <Switch
             value={selectedLanguage === "JAPANESE"}
             onValueChange={() => handleLanguageChange("JAPANESE")}

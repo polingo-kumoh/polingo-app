@@ -40,4 +40,9 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     position: "relative", // 추가
   },
+  content: {
+    flex: 1,
+    position: "relative",
+    bottom: theme.screenHeight - 450,
+  },
 });

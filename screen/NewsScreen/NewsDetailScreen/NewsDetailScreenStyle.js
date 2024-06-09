@@ -29,9 +29,13 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
     borderTopColor: "#d8d8d8",
     borderTopWidth: 1,
+    color: "blue",
   },
   grammerText: {
     fontWeight: "600",
+    color: "teal",
+    borderBottomColor: "#d8d8d8",
+    borderBottomWidth: 1,
   },
   dropDown: {},
   word: {

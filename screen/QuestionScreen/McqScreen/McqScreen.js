@@ -24,7 +24,6 @@ const McqScreen = ({ navigation, route }) => {
   const [timeLeft, setTimeLeft] = useState(10); // 질문당 10초 제한
 
   const timerRef = useRef(null);
-
   const progress = quizData
     ? ((currentQuestionIndex + 1) / quizData?.count) * 100
     : 0;

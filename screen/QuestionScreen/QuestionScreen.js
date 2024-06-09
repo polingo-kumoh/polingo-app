@@ -82,7 +82,12 @@ const QuestionScreen = ({ navigation }) => {
             문제를 읽고 정답을 선택하세요{" "}
           </AppText>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.quizItem}>
+        <TouchableOpacity
+          style={styles.quizItem}
+          onPress={() =>
+            navigation.navigate("DictationScreen", { defaultCategoryId })
+          }
+        >
           <Feather name="monitor" size={40} color="#00B0F0" />
           <AppText style={styles.quizTitle}>받아쓰기</AppText>
           <AppText style={styles.quizDescription}>
@@ -100,15 +105,6 @@ const QuestionScreen = ({ navigation }) => {
           <AppText style={styles.quizDescription}>
             보고만 있거나 듣고만 있거나
           </AppText>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.quizOptions}>
-        <TouchableOpacity
-          style={styles.quizOption}
-          onPress={() => navigation.navigate("QuestionLogScreen")}
-        >
-          <AppText style={styles.quizOptionTitle}>나의 학습 기록</AppText>
-          <MaterialIcons name="keyboard-arrow-right" size={24} color="black" />
         </TouchableOpacity>
       </View>
     </View>

@@ -1,13 +1,5 @@
-// Inside SituationalExDetailScreen.js
-
 import React, { useEffect, useState, useRef } from "react";
-import {
-  ScrollView,
-  View,
-  FlatList,
-  TouchableOpacity,
-  Animated,
-} from "react-native";
+import { ScrollView, View, FlatList, TouchableOpacity } from "react-native";
 import AppText from "../../../components/common/AppText";
 import { styles } from "./SituationalExDetailScreenStyle";
 import SituationDetailItem from "../../../components/component/SituationDetailItem/SituationDetailItem";
@@ -25,15 +17,13 @@ const SituationalExDetailScreen = ({ navigation, route }) => {
     error,
   } = usePlaceEx(token, userData?.default_language);
 
-  const [selectedLabel, setSelectedLabel] = useState(null);
+  const [selectedLabel, setSelectedLabel] = useState("전체");
   const scrollViewRef = useRef(null);
-  const itemOffsets = useRef([]);
 
   useEffect(() => {
     if (placeData) {
-      const defaultLabel = placeData.find((item) => item.name === label)
-        ?.detail_situations[0]?.name;
-      setSelectedLabel(defaultLabel || "");
+      const defaultLabel = "전체";
+      setSelectedLabel(defaultLabel);
     }
   }, [placeData]);
 
@@ -47,28 +37,24 @@ const SituationalExDetailScreen = ({ navigation, route }) => {
     });
   }, [label]);
 
-  const handleLabelPress = (label, index) => {
+  const handleLabelPress = (label) => {
     setSelectedLabel(label);
-    scrollViewRef.current?.scrollTo({
-      y: itemOffsets.current[index],
-      animated: true,
-    });
   };
 
-  const handleScroll = (event) => {
-    const scrollPosition = event.nativeEvent.contentOffset.y;
-    let closestIndex = 0;
-
-    itemOffsets.current.forEach((offset, index) => {
-      if (scrollPosition >= offset) {
-        closestIndex = index;
+  const filterSituationsByLabel = (label) => {
+    if (placeData) {
+      const currentPlace = placeData.find((item) => item.name === label);
+      if (currentPlace) {
+        if (selectedLabel === "전체") {
+          return currentPlace.detail_situations;
+        }
+        const filtered = currentPlace.detail_situations.filter(
+          (situation) => situation.name === selectedLabel
+        );
+        return filtered;
       }
-    });
-
-    const newLabel = currentPlace.detail_situations[closestIndex]?.name;
-    if (newLabel !== selectedLabel) {
-      setSelectedLabel(newLabel);
     }
+    return [];
   };
 
   if (isError) {
@@ -89,11 +75,13 @@ const SituationalExDetailScreen = ({ navigation, route }) => {
 
   const currentPlace = placeData.find((item) => item.name === label);
   const labels = currentPlace
-    ? currentPlace.detail_situations.map((situation, index) => ({
-        name: situation.name,
-        index: index,
-      }))
-    : [];
+    ? [
+        "전체",
+        ...currentPlace.detail_situations.map((situation) => situation.name),
+      ]
+    : ["전체"];
+
+  const filteredSituations = filterSituationsByLabel(label);
 
   return (
     <View style={styles.container}>
@@ -101,22 +89,22 @@ const SituationalExDetailScreen = ({ navigation, route }) => {
         data={labels}
         horizontal
         showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.name}
+        keyExtractor={(item) => item}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.labelItem}
-            onPress={() => handleLabelPress(item.name, item.index)}
+            onPress={() => handleLabelPress(item)}
           >
             <View style={styles.labelContainer}>
               <AppText
                 style={[
                   styles.labelText,
-                  item.name === selectedLabel && styles.selectedLabelText,
+                  item === selectedLabel && styles.selectedLabelText,
                 ]}
               >
-                {item.name}
+                {item}
               </AppText>
-              {item.name === selectedLabel && <View style={styles.underline} />}
+              {item === selectedLabel && <View style={styles.underline} />}
             </View>
           </TouchableOpacity>
         )}
@@ -125,18 +113,10 @@ const SituationalExDetailScreen = ({ navigation, route }) => {
 
       <ScrollView
         ref={scrollViewRef}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        style={styles.content}
+        style={selectedLabel === "전체" ? null : styles.content}
       >
-        {currentPlace?.detail_situations.map((situation, index) => (
-          <View
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              itemOffsets.current[index] = layout.y;
-            }}
-            key={index}
-          >
+        {filteredSituations.map((situation, index) => (
+          <View key={index}>
             <SituationDetailItem
               label={situation.name}
               sentences={situation.sentences}

@@ -332,7 +332,12 @@ const TranslationScreen = ({ navigation }) => {
           style={styles.loadingIndicator}
         />
       )}
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        indicatorStyle="black"
+        showsVerticalScrollIndicator={true}
+        persistentScrollbar={true}
+      >
         <View style={styles.inputWrapper}>
           <TextInput
             style={getInputStyle()}

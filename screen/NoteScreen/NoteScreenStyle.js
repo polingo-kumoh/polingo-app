@@ -55,7 +55,6 @@ export const styles = StyleSheet.create({
   modalView: {
     width: "100%",
     backgroundColor: "white",
-    padding: 35,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -73,8 +72,10 @@ export const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)", // 모달 배경을 투명한 검정색으로 설정
   },
   menuItem: {
-    padding: 10,
+    padding: 5,
     width: "100%", // 메뉴 항목을 전체 너비로
+    borderBottomColor: "#000",
+    borderBottomWidth: 1,
   },
   menuText: {
     textAlign: "center",

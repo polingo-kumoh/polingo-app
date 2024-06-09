@@ -22,6 +22,7 @@ import FlashCardScreen from "../screen/QuestionScreen/FlashCardScreen/FlashCardS
 import BlinkingScreen from "../screen/QuestionScreen/BlinkingScreen/BlinkingScreen";
 import SituationalExScreen from "../screen/SituationalExScreen/SituationalExScreen";
 import SituationalExDetailScreen from "../screen/SituationalExScreen/SituationalExDetailScreen/SituationalExDetailScreen";
+import DictationScreen from "../screen/QuestionScreen/DictationScreen/DictationScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -137,6 +138,11 @@ const MainNavigator = () => {
         name="SituationalExDetailScreen"
         component={SituationalExDetailScreen}
         options={{ headerTitle: "상황별 예문 디테일" }}
+      />
+      <Stack.Screen
+        name="DictationScreen"
+        component={DictationScreen}
+        options={{ headerTitle: "받아쓰기" }}
       />
     </Stack.Navigator>
   );

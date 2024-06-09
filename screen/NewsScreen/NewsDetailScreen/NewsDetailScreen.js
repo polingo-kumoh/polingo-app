@@ -206,7 +206,6 @@ const NewsDetailScreen = ({ route }) => {
   const clearActiveWord = () => {
     setActiveWordIndex(null);
   };
-
   const renderTextWithPressableWords = (text, sentenceIndex) => {
     return text.split(" ").map((word, wordIndex) => {
       const index = `${sentenceIndex}-${wordIndex}`;
@@ -225,7 +224,6 @@ const NewsDetailScreen = ({ route }) => {
       );
     });
   };
-
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -262,9 +260,9 @@ const NewsDetailScreen = ({ route }) => {
             {expandedSections[item.sentence_id] && (
               <View>
                 <AppText style={styles.translationText}>
-                  trans. {item.translated_text}
+                  {item.translated_text}
                 </AppText>
-                <AppText style={styles.grammerText}>{item.grammers}</AppText>
+                <AppText style={styles.grammerText}>{item.grammar}</AppText>
               </View>
             )}
           </View>
