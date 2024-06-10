@@ -3,26 +3,29 @@ import { Text } from "react-native";
 
 const DynamicText = ({ children, style }) => {
   const [fontSize, setFontSize] = useState(style.fontSize || 16);
-  const [isAdjusting, setIsAdjusting] = useState(true);
   const textRef = useRef(null);
 
-  const adjustFontSize = (event) => {
-    const { height } = event.nativeEvent.layout;
+  const adjustFontSize = (height) => {
     const lineHeight = style.lineHeight || fontSize * 1.2;
     const maxHeight = lineHeight * 2; // 두 줄을 기준으로 높이 계산
 
     if (height > maxHeight && fontSize > 10) {
-      setFontSize((prevFontSize) => prevFontSize - 1);
-      setIsAdjusting(true); // 다시 측정하도록 설정
-    } else {
-      setIsAdjusting(false); // 조정 완료
+      setFontSize((prevFontSize) => prevFontSize - 0.1);
     }
   };
 
   useEffect(() => {
     if (textRef.current) {
       textRef.current.measure((x, y, width, height) => {
-        adjustFontSize({ nativeEvent: { layout: { height } } });
+        adjustFontSize(height);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (textRef.current) {
+      textRef.current.measure((x, y, width, height) => {
+        adjustFontSize(height);
       });
     }
   }, [fontSize]);
@@ -31,7 +34,7 @@ const DynamicText = ({ children, style }) => {
     <Text
       ref={textRef}
       style={[style, { fontSize }]}
-      onLayout={isAdjusting ? adjustFontSize : undefined}
+      onLayout={(event) => adjustFontSize(event.nativeEvent.layout.height)}
     >
       {children}
     </Text>

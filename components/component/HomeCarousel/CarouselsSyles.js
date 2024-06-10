@@ -31,6 +31,8 @@ export const styles = StyleSheet.create({
   },
   overlayTitle: {
     alignSelf: "center",
+    flexDirection: "row",
+    gap: 20,
   },
   regionText: {
     fontSize: 24,
@@ -44,7 +46,6 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     lineHeight: 20,
-    textAlign: "center",
     marginBottom: 4,
     color: "#fff",
   },
@@ -59,7 +60,6 @@ export const styles = StyleSheet.create({
   exampleSentenceTranslation: {
     fontSize: 14,
     lineHeight: 18,
-    textAlign: "left",
     fontWeight: "600",
     marginBottom: 4,
     color: "#fff",
