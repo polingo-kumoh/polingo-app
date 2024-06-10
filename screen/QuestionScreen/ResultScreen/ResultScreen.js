@@ -15,7 +15,7 @@ import ResultWord from "../../../components/component/ResultWord/ResultWord";
 import { Ionicons } from "@expo/vector-icons";
 
 const ResultScreen = ({ navigation, route }) => {
-  const { answers, quizData, defaultCategoryId } = route.params;
+  const { answers, quizData, defaultCategoryId, type } = route.params;
   const { token } = useAuth();
   const {
     mutate: submitAnswer,
@@ -39,11 +39,7 @@ const ResultScreen = ({ navigation, route }) => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("McqScreen", { defaultCategoryId })
-          }
-        >
+        <TouchableOpacity onPress={handleRetry}>
           <AppText style={styles.headerButton}>다시 하기</AppText>
         </TouchableOpacity>
       ),
@@ -92,6 +88,16 @@ const ResultScreen = ({ navigation, route }) => {
       setIncorrectWords(incorrectWordsArray);
     }
   }, [data, quizData]);
+
+  const handleRetry = () => {
+    if (type === "DIC") {
+      navigation.navigate("DictationScreen", { defaultCategoryId });
+    } else if (type === "MCQ") {
+      navigation.navigate("McqScreen", { defaultCategoryId });
+    } else if (type === "FLASH") {
+      navigation.navigate("FlashCardScreen", { defaultCategoryId });
+    }
+  };
 
   const handleTabSelect = (tab) => {
     setSelectedTab(tab);

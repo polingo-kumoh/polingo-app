@@ -9,7 +9,6 @@ import {
   Alert,
 } from "react-native";
 import AppText from "../../../components/common/AppText";
-import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./WordDetailModalStyle";
 
@@ -54,9 +53,7 @@ const WordDetailModal = ({
           <AppText style={styles.modalText}>
             {wordDetailData.description}
           </AppText>
-          <TouchableOpacity style={styles.speak}>
-            <AntDesign name="sound" size={24} color="#aaa" />
-          </TouchableOpacity>
+
           <Pressable
             style={[styles.button, styles.buttonClose]}
             onPress={onClose}

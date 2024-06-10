@@ -6,7 +6,6 @@ import { useAuth } from "../../../config/AuthContext";
 import { useQuizData } from "./../../../hooks/useQuizData";
 import QuizQuestion from "./../../../components/component/QuizQuestion/QuizQuestion";
 import { MaterialIcons, Feather, AntDesign } from "@expo/vector-icons";
-import { Audio } from "expo-av";
 
 const BlinkingScreen = ({ navigation, route }) => {
   const { defaultCategoryId } = route.params;
@@ -25,13 +24,6 @@ const BlinkingScreen = ({ navigation, route }) => {
   const progress = quizData
     ? ((currentQuestionIndex + 1) / quizData?.count) * 100
     : 0;
-  const sound = useRef(new Audio.Sound());
-
-  useEffect(() => {
-    return () => {
-      sound.current && sound.current.unloadAsync();
-    };
-  }, []);
 
   useEffect(() => {
     navigation.setOptions({
@@ -54,43 +46,27 @@ const BlinkingScreen = ({ navigation, route }) => {
       }
     };
 
-    const playMeaningSoundAndProceed = () => {
-      handlePlaySound(true); // Play meaning sound
+    const showMeaningAndProceed = () => {
+      setShowMeaning(true);
       setTimeout(proceedToNextQuestion, 2000); // Wait 2 seconds then proceed to the next question
     };
 
-    const playWordSoundAndShowMeaning = () => {
-      handlePlaySound(); // Play word sound
+    const showQuestionAndMeaning = () => {
       setTimeout(() => {
         setShowMeaning(true);
-        setTimeout(playMeaningSoundAndProceed, 2000); // Wait 2 seconds then play meaning sound and proceed
+        setTimeout(showMeaningAndProceed, 2000); // Wait 2 seconds then show meaning and proceed
       }, 2000);
     };
 
     // Start the sequence for each new question
     if (!isPausedRef.current) {
       setShowMeaning(false);
-      playWordSoundAndShowMeaning();
+      showQuestionAndMeaning();
     }
   }, [currentQuestionIndex, quizData?.quizes.length]);
 
-  // Adjust handlePlaySound to handle both word and meaning sounds
-  const handlePlaySound = async (playMeaning = false) => {
-    const { ttsUrl } = playMeaning
-      ? quizData.quizes[currentQuestionIndex].correct_answer
-      : quizData.quizes[currentQuestionIndex];
-    try {
-      await sound.current.unloadAsync();
-      await sound.current.loadAsync({ uri: ttsUrl });
-      await sound.current.playAsync();
-    } catch (error) {
-      console.error("Error loading or playing sound", error);
-    }
-  };
-
   const handleNextQuestion = () => {
     setShowMeaning(true);
-    handlePlaySound(); // Play word sound
   };
 
   return (
@@ -106,7 +82,6 @@ const BlinkingScreen = ({ navigation, route }) => {
             ? quizData.quizes[currentQuestionIndex].correct_answer.text
             : ""
         }
-        onPress={() => handlePlaySound(true)}
       />
       <View style={styles.iconsView}>
         {isPausedRef.current ? (

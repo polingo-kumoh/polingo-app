@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { View, TouchableOpacity } from "react-native";
 import AppText from "../../common/AppText";
 import { styles } from "./NoteItemStyle";
-import { AntDesign } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 
 const NoteItem = ({
@@ -34,9 +33,6 @@ const NoteItem = ({
         {open && <AppText style={styles.itemTrans}>{translation}</AppText>}
         <View style={styles.under}>
           <AppText>{category}</AppText>
-          <TouchableOpacity>
-            <AntDesign name="sound" size={20} color="#aaa" />
-          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     </View>

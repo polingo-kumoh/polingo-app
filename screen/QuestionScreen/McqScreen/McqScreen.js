@@ -118,6 +118,7 @@ const McqScreen = ({ navigation, route }) => {
         answers: updatedAnswers,
         quizData,
         defaultCategoryId,
+        type: "MCQ",
       });
     }
   };

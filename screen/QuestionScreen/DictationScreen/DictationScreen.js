@@ -128,6 +128,7 @@ const DictationScreen = ({ navigation, route }) => {
         answers: updatedAnswers,
         quizData,
         defaultCategoryId,
+        type: "DIC",
       });
     }
   };

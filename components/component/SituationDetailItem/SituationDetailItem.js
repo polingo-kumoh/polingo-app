@@ -2,7 +2,6 @@ import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import AppText from "../../common/AppText";
 import { styles } from "./SituationDetailItemStyle";
-import { AntDesign } from "@expo/vector-icons";
 
 const SituationDetailItem = ({ label, sentences }) => {
   return (
@@ -22,9 +21,6 @@ const SituationDetailItem = ({ label, sentences }) => {
             <AppText style={styles.text}>{sentence.sentence}</AppText>
             <AppText style={styles.textTrans}>{sentence.translate}</AppText>
           </View>
-          <TouchableOpacity>
-            <AntDesign name="sound" size={30} color="black" />
-          </TouchableOpacity>
         </View>
       ))}
     </View>

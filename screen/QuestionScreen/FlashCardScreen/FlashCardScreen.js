@@ -68,6 +68,7 @@ const FlashCardScreen = ({ navigation, route }) => {
         answers: userResponses,
         quizData,
         defaultCategoryId,
+        type: "FLASH",
       });
     }
   }, [userResponses, quizData]);

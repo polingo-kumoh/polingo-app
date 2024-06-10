@@ -23,6 +23,12 @@ const formatItems = (data, numColumns) => {
 
   return data;
 };
+
+const getRandomItem = (data) => {
+  const randomIndex = Math.floor(Math.random() * data.length);
+  return data[randomIndex];
+};
+
 const SituationalExScreen = ({ navigation }) => {
   const { token } = useAuth();
   const { data: userData } = useUserData(token);
@@ -45,7 +51,7 @@ const SituationalExScreen = ({ navigation }) => {
   const renderBanner = () => {
     if (!placeData || placeData.length === 0) return null;
 
-    const bannerItem = placeData[0]; // 첫 번째 아이템을 배너로 사용
+    const bannerItem = getRandomItem(placeData); // 랜덤으로 아이템 선택
     return (
       <View style={styles.banner}>
         <View style={styles.iconView}>
