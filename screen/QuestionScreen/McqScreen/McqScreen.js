@@ -176,7 +176,7 @@ const McqScreen = ({ navigation, route }) => {
         <View style={[styles.progressBar, { width: `${progress}%` }]} />
       </View>
       <AppText style={[styles.timerText, getTimerTextStyle()]}>
-        {timeLeft}s
+        {timeLeft}
       </AppText>
       <QuizQuestion
         question={quizData?.quizes[currentQuestionIndex]?.question}

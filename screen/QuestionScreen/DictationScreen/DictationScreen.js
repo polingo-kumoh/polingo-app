@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   TextInput,
@@ -37,6 +37,7 @@ const DictationScreen = ({ navigation, route }) => {
   const [userInput, setUserInput] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
   const [answers, setAnswers] = useState([]);
+  const [answeredCorrectly, setAnsweredCorrectly] = useState(null);
 
   const progress = quizData
     ? ((currentQuestionIndex + 1) / quizData?.count) * 100
@@ -78,18 +79,44 @@ const DictationScreen = ({ navigation, route }) => {
 
     const newAnswer = {
       quiz_id: quizData?.quizes[currentQuestionIndex]?.id,
-      selected_option: userInput,
+      selected_option_id: isCorrect
+        ? quizData?.quizes[currentQuestionIndex]?.correct_id
+        : null,
       isCorrect: isCorrect,
     };
     const updatedAnswers = [...answers, newAnswer];
 
     setAnswers(updatedAnswers);
+    setAnsweredCorrectly(isCorrect);
     setShowAnswer(true);
 
     setTimeout(() => {
       goToNextQuestion(updatedAnswers);
       setShowAnswer(false);
+      setAnsweredCorrectly(null);
     }, 2000);
+  };
+
+  const handleTimeUp = () => {
+    if (quizData?.quizes && quizData.quizes[currentQuestionIndex]) {
+      const currentQuestion = quizData.quizes[currentQuestionIndex];
+      const newAnswer = {
+        quiz_id: currentQuestion.id,
+        selected_option_id: null,
+        isCorrect: false,
+      };
+      const updatedAnswers = [...answers, newAnswer];
+
+      setAnswers(updatedAnswers);
+      setShowAnswer(true);
+
+      setTimeout(() => {
+        goToNextQuestion(updatedAnswers);
+        setShowAnswer(false);
+      }, 2000);
+    } else {
+      console.log("No valid question found");
+    }
   };
 
   const goToNextQuestion = (updatedAnswers) => {
@@ -149,11 +176,11 @@ const DictationScreen = ({ navigation, route }) => {
             style={[
               styles.answerText,
               {
-                color: answers[answers.length - 1]?.isCorrect ? "blue" : "red",
+                color: answeredCorrectly ? "blue" : "red",
               },
             ]}
           >
-            {answers[answers.length - 1]?.isCorrect
+            {answeredCorrectly
               ? "정답 !"
               : `틀렸습니다. \n정답 : ${quizData?.quizes[currentQuestionIndex]?.question}`}
           </AppText>
