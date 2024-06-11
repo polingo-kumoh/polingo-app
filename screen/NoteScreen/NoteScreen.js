@@ -16,6 +16,7 @@ import { AntDesign } from "@expo/vector-icons";
 import NoteItem from "./../../components/component/NoteItem/NoteItem";
 import { Feather } from "@expo/vector-icons";
 import { Foundation } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons"; // Ionicons 추가
 import Checkbox from "expo-checkbox";
 import { useWordData } from "../../hooks/useWordData";
 import { useAuth } from "./../../config/AuthContext";
@@ -120,7 +121,7 @@ const NoteScreen = ({ navigation }) => {
         defaultCategoryId,
       });
     }
-  }; //이거 적용해야함
+  };
 
   const handleDeleteWords = () => {
     if (selectedItems.length > 0) {
@@ -133,7 +134,7 @@ const NoteScreen = ({ navigation }) => {
           text: "OK",
           onPress: () => {
             deleteWord(
-              { token, noteId: defaultCategoryId, wordId: selectedItems }, // Send all IDs in a single request if supported
+              { token, noteId: defaultCategoryId, wordId: selectedItems },
               {
                 onSuccess: () => {
                   wordRefetch();
@@ -157,7 +158,7 @@ const NoteScreen = ({ navigation }) => {
     }
   };
 
-  if (isLoading || !wordData || isDeleting) {
+  if (isLoading || isDeleting) {
     return (
       <View style={styles.loaderContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -202,7 +203,6 @@ const NoteScreen = ({ navigation }) => {
             <TouchableOpacity
               style={styles.menuItem}
               onPress={() => {
-                // 그룹 변경 로직을 수행하고 메뉴를 닫습니다.
                 closeMenu();
                 handleEditToggle();
                 handleNavigateToWordEditScreen();
@@ -216,7 +216,6 @@ const NoteScreen = ({ navigation }) => {
               style={styles.menuItem}
               onPress={() => {
                 closeMenu();
-
                 setEditMode(false);
               }}
             >
@@ -225,60 +224,90 @@ const NoteScreen = ({ navigation }) => {
           </View>
         </TouchableOpacity>
       </Modal>
-      <FlatList
-        ListHeaderComponent={
-          <>
-            <View style={styles.subContainer}>
-              <AppText style={styles.selectedCategory}>
-                현재 단어장 : {defaultCategoryName}
+      {wordData?.words?.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Ionicons name="sad-outline" size={100} color="grey" />
+          <AppText style={styles.emptyText}>저장된 단어가 없어요!</AppText>
+          <View style={styles.saveBtnView}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("TranslationScreen")}
+            >
+              <AppText style={styles.navigateText}>
+                단어 저장하러가기 ➡️
               </AppText>
-            </View>
-            {editMode && (
-              <View style={styles.checkboxContainer}>
-                <Checkbox
-                  value={selectAll}
-                  onValueChange={(newValue) => {
-                    setSelectAll(newValue);
-                    if (newValue) {
-                      // 모든 단어의 ID를 selectedItems에 추가
-                      setSelectedItems(wordData?.words?.map((item) => item.id));
-                    } else {
-                      // selectedItems를 비움
-                      setSelectedItems([]);
-                    }
-                  }}
-                  style={styles.checkbox}
-                />
-                <AppText style={styles.allCheckText}>전체 선택</AppText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate("TranslationScreen")}
+            >
+              <AppText style={styles.buttonText}>번역기로 이동</AppText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate("NewsScreen")}
+            >
+              <AppText style={styles.buttonText}>뉴스로 이동</AppText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : (
+        <FlatList
+          ListHeaderComponent={
+            <>
+              <View style={styles.subContainer}>
+                <AppText style={styles.selectedCategory}>
+                  현재 단어장 : {defaultCategoryName}
+                </AppText>
               </View>
-            )}
-          </>
-        }
-        data={wordData?.words}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <NoteItem
-            id={item.id}
-            origin={item.word}
-            translation={item.description}
-            category={wordData.name}
-            edit={editMode}
-            selected={selectedItems?.includes(item.id)}
-            onSelect={handleSelectItem}
-            onDelete={() => handleDeleteWord(defaultCategoryId, item.id)}
-            selectAll={selectAll}
-          />
-        )}
-        style={styles.content}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={["#0000ff"]} // Android only: background color when refreshing
-            tintColor="#0000ff" // iOS only: color of the refresh indicator
-          />
-        }
-      />
+              {editMode && (
+                <View style={styles.checkboxContainer}>
+                  <Checkbox
+                    value={selectAll}
+                    onValueChange={(newValue) => {
+                      setSelectAll(newValue);
+                      if (newValue) {
+                        // 모든 단어의 ID를 selectedItems에 추가
+                        setSelectedItems(
+                          wordData?.words?.map((item) => item.id)
+                        );
+                      } else {
+                        // selectedItems를 비움
+                        setSelectedItems([]);
+                      }
+                    }}
+                    style={styles.checkbox}
+                  />
+                  <AppText style={styles.allCheckText}>전체 선택</AppText>
+                </View>
+              )}
+            </>
+          }
+          data={wordData?.words}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <NoteItem
+              id={item.id}
+              origin={item.word}
+              translation={item.description}
+              category={wordData.name}
+              edit={editMode}
+              selected={selectedItems?.includes(item.id)}
+              onSelect={handleSelectItem}
+              onDelete={() => handleDeleteWord(defaultCategoryId, item.id)}
+              selectAll={selectAll}
+            />
+          )}
+          style={styles.content}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#0000ff"]} // Android only: background color when refreshing
+              tintColor="#0000ff" // iOS only: color of the refresh indicator
+            />
+          }
+        />
+      )}
       {editMode ? (
         <TouchableOpacity
           style={styles.pencilIcon}

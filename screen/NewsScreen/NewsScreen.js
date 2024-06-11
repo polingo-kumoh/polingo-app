@@ -12,6 +12,7 @@ import { useNewsData } from "../../hooks/useNewsData";
 import { useAuth } from "../../config/AuthContext";
 import { useUserData } from "../../hooks/useUserData";
 import { useScrapData } from "../../hooks/useScrapData";
+import { Ionicons } from "@expo/vector-icons";
 
 const NewsScreen = ({ navigation }) => {
   const { token } = useAuth();
@@ -169,6 +170,11 @@ const NewsScreen = ({ navigation }) => {
         <AppText style={styles.newsTitle}>Scrap</AppText>
         {isScrapDataLoading && scrapPage === 0 ? (
           <ActivityIndicator size="large" color="#0000ff" />
+        ) : scrapItems.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Ionicons name="sad-outline" size={100} color="grey" />
+            <AppText style={styles.emptyText}>스크랩한 뉴스가 없어요 !</AppText>
+          </View>
         ) : (
           <FlatList
             data={scrapItems}
@@ -191,6 +197,32 @@ const NewsScreen = ({ navigation }) => {
         <AppText style={styles.newsTitle}>News</AppText>
         {isNewsDataLoading && newsPage === 0 ? (
           <ActivityIndicator size="large" color="#0000ff" />
+        ) : newsItems.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Ionicons name="sad-outline" size={100} color="grey" />
+            <AppText style={styles.emptyText}>No news yet!</AppText>
+            <View style={styles.saveBtnView}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("TranslationScreen")}
+              >
+                <AppText style={styles.navigateText}>
+                  단어 저장하러가기 ➡️
+                </AppText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigation.navigate("TranslationScreen")}
+              >
+                <AppText style={styles.buttonText}>번역기로 이동</AppText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigation.navigate("NewsScreen")}
+              >
+                <AppText style={styles.buttonText}>뉴스로 이동</AppText>
+              </TouchableOpacity>
+            </View>
+          </View>
         ) : (
           <FlatList
             data={newsItems}

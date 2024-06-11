@@ -62,4 +62,17 @@ export const styles = StyleSheet.create({
     color: "grey",
     fontWeight: "500",
   },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  emptyText: {
+    marginTop: 20,
+    fontSize: 18,
+    color: "grey",
+    textAlign: "center",
+    fontWeight: "600",
+  },
 });

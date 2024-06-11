@@ -1,16 +1,15 @@
-// Inside QuestionScreen.js
-
 import React, { useEffect, useState, useCallback } from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Modal } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import AppText from "../../components/common/AppText";
 import { styles } from "./QuestionScreenStyle";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { useNoteData } from "../../hooks/useNoteData";
+import { useWordData } from "../../hooks/useWordData";
 import { useAuth } from "../../config/AuthContext";
 
 const QuestionScreen = ({ navigation }) => {
@@ -18,6 +17,14 @@ const QuestionScreen = ({ navigation }) => {
   const { data: noteDataApi, refetch } = useNoteData(token);
   const [defaultCategoryId, setDefaultCategoryId] = useState(null);
   const [defaultCategoryName, setDefaultCategoryName] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // defaultCategoryId를 이용해 단어 데이터를 가져오기
+  const { data: wordData, refetch: wordRefetch } = useWordData(
+    token,
+    defaultCategoryId,
+    !!defaultCategoryId
+  );
 
   useEffect(() => {
     const defaultItem = noteDataApi?.find((item) => item.is_default);
@@ -26,6 +33,12 @@ const QuestionScreen = ({ navigation }) => {
       setDefaultCategoryName(defaultItem.name);
     }
   }, [noteDataApi]);
+
+  useEffect(() => {
+    if (defaultCategoryId) {
+      wordRefetch();
+    }
+  }, [defaultCategoryId, wordRefetch]);
 
   useFocusEffect(
     useCallback(() => {
@@ -47,14 +60,62 @@ const QuestionScreen = ({ navigation }) => {
     });
   }, [navigation, defaultCategoryName]);
 
+  const handlePress = (screenName) => {
+    if (wordData?.words?.length === 0) {
+      setModalVisible(true);
+    } else {
+      navigation.navigate(screenName, { defaultCategoryId });
+    }
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
   return (
     <View style={styles.container}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Ionicons name="sad-outline" size={100} color="grey" />
+            <AppText style={styles.modalText}>저장된 단어가 없어요!</AppText>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                closeModal();
+                navigation.navigate("TranslationScreen");
+              }}
+            >
+              <AppText style={styles.buttonText}>번역기로 이동</AppText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                closeModal();
+                navigation.navigate("NewsScreen");
+              }}
+            >
+              <AppText style={styles.buttonText}>뉴스로 이동</AppText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ ...styles.button, backgroundColor: "red" }}
+              onPress={() => closeModal()}
+            >
+              <AppText style={styles.buttonText}>닫기</AppText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <View style={styles.quizItemView}>
         <TouchableOpacity
           style={styles.quizItem}
-          onPress={() =>
-            navigation.navigate("FlashCardScreen", { defaultCategoryId })
-          }
+          onPress={() => handlePress("FlashCardScreen")}
         >
           <MaterialCommunityIcons
             name="cards-outline"
@@ -68,9 +129,7 @@ const QuestionScreen = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.quizItem}
-          onPress={() =>
-            navigation.navigate("McqScreen", { defaultCategoryId })
-          }
+          onPress={() => handlePress("McqScreen")}
         >
           <MaterialCommunityIcons
             name="numeric-4-box-multiple-outline"
@@ -84,9 +143,7 @@ const QuestionScreen = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.quizItem}
-          onPress={() =>
-            navigation.navigate("DictationScreen", { defaultCategoryId })
-          }
+          onPress={() => handlePress("DictationScreen")}
         >
           <Feather name="monitor" size={40} color="#00B0F0" />
           <AppText style={styles.quizTitle}>받아쓰기</AppText>
@@ -96,9 +153,7 @@ const QuestionScreen = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.quizItem}
-          onPress={() =>
-            navigation.navigate("BlinkingScreen", { defaultCategoryId })
-          }
+          onPress={() => handlePress("BlinkingScreen")}
         >
           <FontAwesome5 name="angle-double-right" size={40} color="#00B0F0" />
           <AppText style={styles.quizTitle}>깜빡이</AppText>

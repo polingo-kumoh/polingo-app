@@ -32,6 +32,7 @@ export const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     lineHeight: 26,
+    fontWeight: "600",
   },
   itemsView: {
     flex: 3,
