@@ -206,6 +206,7 @@ const NewsDetailScreen = ({ route }) => {
   const clearActiveWord = () => {
     setActiveWordIndex(null);
   };
+
   const renderTextWithPressableWords = (text, sentenceIndex) => {
     return text.split(" ").map((word, wordIndex) => {
       const index = `${sentenceIndex}-${wordIndex}`;
@@ -224,6 +225,7 @@ const NewsDetailScreen = ({ route }) => {
       );
     });
   };
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -244,18 +246,18 @@ const NewsDetailScreen = ({ route }) => {
                 item.original_text,
                 item.sentence_id
               )}
-              <Pressable
+              <TouchableOpacity
                 onPress={() => toggleSection(item.sentence_id)}
-                style={styles.dropDown}
+                style={styles.dropDownTouchable}
               >
                 <AntDesign
                   name={
                     expandedSections[item.sentence_id] ? "caretup" : "caretdown"
                   }
-                  size={18}
+                  size={24}
                   color="black"
                 />
-              </Pressable>
+              </TouchableOpacity>
             </View>
             {expandedSections[item.sentence_id] && (
               <View>
