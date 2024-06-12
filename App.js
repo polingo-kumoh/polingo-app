@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
+import { StatusBar } from "react-native";
 
 import { QueryClientProvider } from "react-query";
 import { queryClient } from "./config/queryClient";
@@ -41,6 +42,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <NavigationContainer>
+          <StatusBar barStyle="light-content" hidden={false} />
           <AppContent />
         </NavigationContainer>
       </AuthProvider>
