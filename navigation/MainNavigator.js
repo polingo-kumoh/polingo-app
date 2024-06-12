@@ -102,7 +102,7 @@ const MainNavigator = () => {
       <Stack.Screen
         name="QuestionCategorySelectionScreen"
         component={QuestionCategorySelectionScreen}
-        options={{ headerTitle: "문제집 카테고리 설정" }}
+        options={{ headerTitle: "문제집 단어장 설정" }}
       />
       <Stack.Screen
         name="QuestionLogScreen"
