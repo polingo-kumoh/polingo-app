@@ -130,13 +130,17 @@ const HomeScreen = () => {
     });
   }
 
-  if (dateData && !isDateError) {
+  if (true) {
     carouselImages.push({
-      source: { uri: dateData?.situation_image },
-      region: weatherData?.city,
-      temperature: currentDate,
-      example_sentence1: dateData?.sentance,
-      example_sentence1_translate: dateData?.translate,
+      source: {
+        uri: "https://previews.123rf.com/images/radenmas/radenmas1607/radenmas160700068/60163419-%EC%83%9D%EC%9D%BC-%EC%B6%95%ED%95%98-%EB%B0%B0%EB%84%88.jpg",
+      },
+      region: "Gumi",
+      temperature: "2024-06-13",
+      example_sentence1:
+        "Today is the day of the announcement of the Creative Design Project! Thank you all for your hard work.",
+      example_sentence1_translate:
+        "오늘은 창의설계프로젝트 발표날입니다! 다들 고생하셨습니다.",
     });
   }
 

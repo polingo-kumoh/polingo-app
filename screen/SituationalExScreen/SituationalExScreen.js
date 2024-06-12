@@ -9,6 +9,37 @@ import { usePlaceEx } from "../../hooks/usePlaceEx";
 import { useAuth } from "../../config/AuthContext";
 import { useUserData } from "../../hooks/useUserData";
 
+// Import all images statically
+const images = {
+  경기장: require("../../assets/situationIcon/경기장.png"),
+  경찰서: require("../../assets/situationIcon/경찰서.webp"),
+  공원: require("../../assets/situationIcon/공원.webp"),
+  공항: require("../../assets/situationIcon/공항.png"),
+  관광지: require("../../assets/situationIcon/관광지.png"),
+  극장: require("../../assets/situationIcon/극장.png"),
+  대중교통: require("../../assets/situationIcon/대중교통.png"),
+  도서관: require("../../assets/situationIcon/도서관.png"),
+  등산: require("../../assets/situationIcon/등산.webp"),
+  렌터카: require("../../assets/situationIcon/렌터카.webp"),
+  마트: require("../../assets/situationIcon/마트.webp"),
+  미용실: require("../../assets/situationIcon/미용실.webp"),
+  병원: require("../../assets/situationIcon/병원.webp"),
+  서점: require("../../assets/situationIcon/서점.webp"),
+  수영장: require("../../assets/situationIcon/수영장.webp"),
+  시장: require("../../assets/situationIcon/시장.webp"),
+  식당: require("../../assets/situationIcon/식당.png"),
+  약국: require("../../assets/situationIcon/약국.png"),
+  은행: require("../../assets/situationIcon/은행.png"),
+  전시회: require("../../assets/situationIcon/전시회.png"),
+  주유소: require("../../assets/situationIcon/주유소.png"),
+  체육관: require("../../assets/situationIcon/체육관.webp"),
+  카페: require("../../assets/situationIcon/카페.png"),
+  택시: require("../../assets/situationIcon/택시.png"),
+  투어: require("../../assets/situationIcon/투어.webp"),
+  해변: require("../../assets/situationIcon/해변.png"),
+  호텔: require("../../assets/situationIcon/호텔.webp"),
+};
+
 const formatItems = (data, numColumns) => {
   const numberOfFullRows = Math.floor(data.length / numColumns);
   let numberOfElementsLastRow = data.length - numberOfFullRows * numColumns;
@@ -51,12 +82,17 @@ const SituationalExScreen = ({ navigation }) => {
   const renderBanner = () => {
     if (!placeData || placeData.length === 0) return null;
 
-    const bannerItem = getRandomItem(placeData); // 랜덤으로 아이템 선택
+    const bannerItem = getRandomItem(placeData);
+    const bannerImageSource =
+      images[bannerItem.name] ||
+      images[`${bannerItem.name}_png`] ||
+      images[`${bannerItem.name}_webp`];
+
     return (
       <View style={styles.banner}>
         <View style={styles.iconView}>
           <Image
-            source={{ uri: bannerItem.icon }}
+            source={bannerImageSource}
             style={styles.bannerImg}
             resizeMode="contain"
           />
@@ -86,22 +122,31 @@ const SituationalExScreen = ({ navigation }) => {
     );
   };
 
+  const renderItem = ({ item }) => {
+    if (item.empty) {
+      return <View style={[styles.item, styles.itemInvisible]} />;
+    }
+
+    const imageSource =
+      images[item.name] ||
+      images[`${item.name}_png`] ||
+      images[`${item.name}_webp`];
+
+    return (
+      <SituationItem
+        navigation={navigation}
+        imageSource={imageSource}
+        label={item.name}
+      />
+    );
+  };
+
   return (
     <View style={styles.container}>
       {renderBanner()}
       <FlatList
         data={formattedItems}
-        renderItem={({ item }) =>
-          item.empty ? (
-            <View style={[styles.item, styles.itemInvisible]} />
-          ) : (
-            <SituationItem
-              navigation={navigation}
-              imageSource={{ uri: item.icon }}
-              label={item.name}
-            />
-          )
-        }
+        renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         numColumns={5}
         contentContainerStyle={styles.grid}
