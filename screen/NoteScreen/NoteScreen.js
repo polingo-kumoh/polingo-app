@@ -22,6 +22,7 @@ import { useWordData } from "../../hooks/useWordData";
 import { useAuth } from "./../../config/AuthContext";
 import { useNoteData } from "../../hooks/useNoteData";
 import { useDeleteWord } from "../../hooks/useDeleteWord";
+import { useUserData } from "../../hooks/useUserData";
 
 const NoteScreen = ({ navigation }) => {
   const [selectAll, setSelectAll] = useState(false);
@@ -31,6 +32,7 @@ const NoteScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [defaultCategoryId, setDefaultCategoryId] = useState(null);
   const { token } = useAuth();
+  const { data: userData, isLoading: isUserLoading } = useUserData(token);
   const { data: noteDataApi, refetch } = useNoteData(token);
   const {
     data: wordData,
@@ -41,14 +43,17 @@ const NoteScreen = ({ navigation }) => {
   } = useWordData(token, defaultCategoryId, !!defaultCategoryId);
   const { mutate: deleteWord, isLoading: isDeleting } = useDeleteWord();
   const [defaultCategoryName, setDefaultCategoryName] = useState("");
-
   useEffect(() => {
-    const defaultItem = noteDataApi?.find((item) => item.is_default);
-    if (defaultItem) {
-      setDefaultCategoryId(defaultItem.id);
-      setDefaultCategoryName(defaultItem.name);
+    if (userData && noteDataApi) {
+      const defaultItem = noteDataApi.find(
+        (item) => item.is_default && item.language === userData.default_language
+      );
+      if (defaultItem) {
+        setDefaultCategoryId(defaultItem.id);
+        setDefaultCategoryName(defaultItem.name);
+      }
     }
-  }, [noteDataApi]);
+  }, [noteDataApi, userData]);
 
   useEffect(() => {
     navigation.setOptions({

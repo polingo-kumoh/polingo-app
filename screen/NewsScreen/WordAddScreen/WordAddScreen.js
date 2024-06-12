@@ -71,6 +71,7 @@ const WordAddScreen = ({ navigation, route }) => {
             count={item.count}
             isSelected={selectedId === item.id}
             onPress={handleSelectItem}
+            language={item.language}
           />
         )}
       />

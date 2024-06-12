@@ -93,7 +93,6 @@ const CategoryEditScreen = ({ navigation }) => {
       { cancelable: false } // 밖을 눌러도 닫히지 않도록 설정
     );
   };
-
   const handleSetDefaultCategory = (id) => {
     Alert.alert(
       "기본 단어장 설정",
