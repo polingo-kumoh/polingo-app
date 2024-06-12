@@ -12,32 +12,32 @@ import { useUserData } from "../../hooks/useUserData";
 // Import all images statically
 const images = {
   경기장: require("../../assets/situationIcon/경기장.png"),
-  경찰서: require("../../assets/situationIcon/경찰서.webp"),
-  공원: require("../../assets/situationIcon/공원.webp"),
+  경찰서: require("../../assets/situationIcon/경찰서.png"),
+  공원: require("../../assets/situationIcon/공원.png"),
   공항: require("../../assets/situationIcon/공항.png"),
   관광지: require("../../assets/situationIcon/관광지.png"),
   극장: require("../../assets/situationIcon/극장.png"),
   대중교통: require("../../assets/situationIcon/대중교통.png"),
   도서관: require("../../assets/situationIcon/도서관.png"),
-  등산: require("../../assets/situationIcon/등산.webp"),
-  렌터카: require("../../assets/situationIcon/렌터카.webp"),
-  마트: require("../../assets/situationIcon/마트.webp"),
-  미용실: require("../../assets/situationIcon/미용실.webp"),
-  병원: require("../../assets/situationIcon/병원.webp"),
-  서점: require("../../assets/situationIcon/서점.webp"),
-  수영장: require("../../assets/situationIcon/수영장.webp"),
-  시장: require("../../assets/situationIcon/시장.webp"),
+  등산: require("../../assets/situationIcon/등산.png"),
+  렌터카: require("../../assets/situationIcon/렌터카.png"),
+  마트: require("../../assets/situationIcon/마트.png"),
+  미용실: require("../../assets/situationIcon/미용실.png"),
+  병원: require("../../assets/situationIcon/병원.png"),
+  서점: require("../../assets/situationIcon/서점.png"),
+  수영장: require("../../assets/situationIcon/수영장.png"),
+  시장: require("../../assets/situationIcon/시장.png"),
   식당: require("../../assets/situationIcon/식당.png"),
   약국: require("../../assets/situationIcon/약국.png"),
   은행: require("../../assets/situationIcon/은행.png"),
   전시회: require("../../assets/situationIcon/전시회.png"),
   주유소: require("../../assets/situationIcon/주유소.png"),
-  체육관: require("../../assets/situationIcon/체육관.webp"),
+  체육관: require("../../assets/situationIcon/체육관.png"),
   카페: require("../../assets/situationIcon/카페.png"),
   택시: require("../../assets/situationIcon/택시.png"),
-  투어: require("../../assets/situationIcon/투어.webp"),
+  투어: require("../../assets/situationIcon/투어.png"),
   해변: require("../../assets/situationIcon/해변.png"),
-  호텔: require("../../assets/situationIcon/호텔.webp"),
+  호텔: require("../../assets/situationIcon/호텔.png"),
 };
 
 const formatItems = (data, numColumns) => {
@@ -78,11 +78,11 @@ const SituationalExScreen = ({ navigation }) => {
   }
 
   const formattedItems = placeData ? formatItems(placeData, 5) : [];
+  const bannerItem = placeData ? getRandomItem(placeData) : null;
 
   const renderBanner = () => {
-    if (!placeData || placeData.length === 0) return null;
+    if (!bannerItem) return null;
 
-    const bannerItem = getRandomItem(placeData);
     const bannerImageSource =
       images[bannerItem.name] ||
       images[`${bannerItem.name}_png`] ||
